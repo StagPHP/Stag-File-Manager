@@ -140,7 +140,7 @@ class stag_file_manager{
         /** File updated successfully => return true */
         return [
           'status' => true,
-          'description' => 'File "'.$absolute_file_path.'" has been updated!'
+          'description' => 'File on the specified path: "'.$absolute_file_path.'" has been updated!'
         ];
       }
     }
@@ -161,7 +161,7 @@ class stag_file_manager{
             /** File updated successfully => return true */
             return [
               'status' => true,
-              'description' => 'File "'.$absolute_file_path.'" has been updated!'
+              'description' => 'Directory created: "'.$new_directory_path.'". And file created on the specified path: "'.$absolute_file_path.'"'
             ];
           }
         } else {
@@ -170,7 +170,7 @@ class stag_file_manager{
           /** File updated successfully => return true */
           return [
             'status' => true,
-            'description' => 'File "'.$absolute_file_path.'" has been updated!'
+            'description' => 'File created on the specified path: "'.$absolute_file_path.'"'
           ];
         }
       }
