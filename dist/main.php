@@ -1,13 +1,18 @@
 <?php
 /**
- * Name:            CLI Commands (StagPHP Library)
+ * Name:            Stag File Manager (StagPHP Library)
  * Description:     Contains several global defined variable
  *
  * @package:        StagPHP Library File
  */
 
-/** Stag file operation */
-class stag_file_operator{
+/** 
+ * Stag file manager 
+ * 
+ * This class must be initialized without
+ * any parameters and inside the StagPHP
+ * framework */
+class stag_file_manager{
   /** Initialized Flag */
   private $initialized = false;
 
