@@ -168,8 +168,159 @@ $result = $file_manager->copy_file('/loc-1/'.$file_name, '/loc-2/'.$file_name);
 ## Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
-|Relative path of a file (**string**)|Path of the file, which needs to be updated or where it needs to be created. Must be relative to root|
-|File content (**string**)|File content|
+|Relative path of a file (**string**)|Path of the file, which needs to be copied|
+|Relative path of a file (**string**)|New path of the file, where it needs to be copied|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Move File
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Move File
+ * 
+ * This method scans the directory on the level
+ * specified. For sub directory, you can call the
+ * method again. method is restricted to the single
+ * level to boost performance.
+ * 
+ * @returns: array - status, array of files,
+ * array of directories */
+$result = $file_manager->move_file('/loc-1/'.$file_name, '/loc-2/'.$file_name);
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Relative path of a file (**string**)|Path of the file, which needs to be moved|
+|Relative path of a file (**string**)|New path of the file, where it needs to be moved|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Delete File
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Delete File
+ * 
+ * This method deletes the file specified. This
+ * operation is nor reversible, so it deletes
+ * the file permanetly.
+ * 
+ * @returns: array - status, description */
+$result = $file_manager->delete_file('/loc/'.$file_name);
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Relative path of a file (**string**)|Path of the file, which needs to be deleted|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Create Directory
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Create Directory
+ * 
+ * This method creates new empty directory. This
+ * fails if directory already exists.
+ * 
+ * @returns: array - status, description */
+$result = $file_manager->delete_directory('/new-directory/');
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Relative path of a file (**string**)|Path of the file, which needs to be deleted|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Copy Directory
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Copy Directory
+ * 
+ * This method creates new empty directory. This
+ * fails if directory already exists.
+ * 
+ * @returns: array - status, description */
+$result = $file_manager->copy_directory('/directory/', '/new-loc/directory/');
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Directory Path (**string**)|Path of the directory, which needs to be copied|
+|Directory Path (**string**)|Path to new location, where directory needs to be copied|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Move Directory
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Move Directory
+ * 
+ * This method creates new empty directory. This
+ * fails if directory already exists.
+ * 
+ * @returns: array - status, description */
+$result = $file_manager->move_directory('/directory/', '/new-loc/directory/');
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Directory Path (**string**)|Path of the directory, which needs to be moved|
+|Directory Path (**string**)|Path to new location, where directory needs to be moved|
+
+## Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if operation was successful|
+|description (**string**) |Textual  description of te operation. Error message in case of failure|
+
+# Delete Directory
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Delete Directory
+ * 
+ * This method creates new empty directory. This
+ * fails if directory already exists.
+ * 
+ * @returns: array - status, description */
+$result = $file_manager->delete_directory('/directory/');
+```
+## Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Directory Path (**string**)|Path of the directory, which needs to be deleted|
 
 ## Array of values returned after execution:
 |Returned keys					|Explanation 				 |
