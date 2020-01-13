@@ -54,9 +54,10 @@ class stag_file_manager_functions{
                     return [
                         'status'            => TRUE,
                         'type'              => 'file',
+                        'mime_type'         => $file_type,
                         'is_writeable'      => $is_writeable,
-                        'file_permission'   => $file_permission,
-                        'last_modified_time'=> $file_mod
+                        'permission'        => $file_permission,
+                        'modified_time'     => $file_mod
                     ];
                 }
                 
@@ -85,9 +86,10 @@ class stag_file_manager_functions{
                     return [
                         'status'                => TRUE,
                         'type'                  => 'file',
+                        'mime_type'             => 'inode/directory',
                         'is_writeable'          => $is_writeable,
-                        'directory_permission'  => $file_permission,
-                        'last_modified_time'    => $file_mod
+                        'permission'            => $file_permission,
+                        'modified_time'         => $file_mod
                     ];
                 }
 
