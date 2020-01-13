@@ -10,19 +10,17 @@ Stag File Manager is the part of StagPHP framework core library. This can also b
 ## Installation
 
 ### On StagPHP
-You don't need to install anything to use this library in your StagPHP application. Its comes built-in. You just need to attach it on your script. Tutorials will be updated soon.
+You don't need to install anything to use this library in your StagPHP application. Its comes built-in. You just need to attach it on your script. Initialize the object of stag_file_manager class. And call the methods from the object. Tutorials will be updated soon.
 
 ### On another PHP framework
-```mermaid
-graph TD
-a(Include stag-file-manager.php)-->b(Define ABSPATH)
-b-->c(Create object of stag_file manager class)
-Create an object of stag_file_manager class. And use the methods of the object to start managing files and directories
+It is really simple, no brainer. Just include the file in your script and initialize the object of stag_file_manager class. And call the methods from the object.
+1. First, you need to copy the files inside the dist (distribution) folder to your project folder. Include stag-file-manager.php in your PHP script or application at a root level.
+2. Define ABSPATH in your root level script.
+```PHP
+if(!defined('ABSPATH')) define('ABSPATH',  dirname(__FILE__));
 ```
-1. First, you need to copy the files inside the dist (distribution) folder.
-2. Include stag-file-manager.php in your PHP script or application.
-3. After including the file, Initialize the object of stag_file manager class.
-4. Use the object Initialized, to manage files and folder using the methods listed below.
+4. After including the file, initialize the object of stag_file manager class.
+5. Use the object Initialized, to manage files and folder using the methods listed below.
 
 
 ## Stag File Manager Operations
@@ -39,7 +37,7 @@ Create an object of stag_file_manager class. And use the methods of the object t
 |[Copy Directory](#copy-file)|Create a copy of the directory (**recursively**)|
 |[Move Directory](#copy-file)|Move directory to another location (**recursively**)|
 |[Delete Directory](#copy-file)|Delets the directory permanently (**recursively**)|
----
+
 ### Lists of Hacks:
 |Hacks					 		 |Explanation				|
 |:-------------------------------|:-------------------------|
@@ -92,7 +90,7 @@ $full_info = $file_manager->get_info('/test-directory/', TRUE);
 |type			|**file** or **directory** depending upon the argument passed|
 |is_writable	|In boolean, **TRUE** if file is writable|
 |mime_type 		|View [MIME Types](https://en.wikipedia.org/wiki/Media_type) (**inode/directory** in case of directory)|
-|permission		|File's permissions as a octal numbers. More info: [File Permission](https://www.php.net/manual/en/function.fileperms.php)|
+|permission		|File permissions in a octal numbers [more info](https://www.php.net/manual/en/function.fileperms.php).|
 |modified_time	|Last modified time of a file or directory **YYYY-12-30 24:60:60**|
 
 # Scan Directory
