@@ -130,7 +130,7 @@ class stag_file_manager_functions{
             foreach($response as $key => $value){
                 if(!in_array($value, array(".",".."))){
                     /** Create array of directories */
-                    if(is_dir($absolute_path.DIRECTORY_SEPARATOR.$value)) array_push($directories, $value);
+                    if(is_dir($absolute_path.'/'.$value)) array_push($directories, $value);
 
                     // Create array of files
                     else array_push($files, $value);
@@ -211,15 +211,15 @@ class stag_file_manager_functions{
         $dir = opendir($src_path);  
       
         // Make the destination directory if not exist 
-        @mkdir($dst_path, 0777);
+        @mkdir($dst_path, 0777, TRUE);
       
         // Loop through the files in source directory 
         while(false !== ($file = readdir($dir))){
             if(($file != '.') && ($file != '..')){  
-                if(is_dir($src_path.DIRECTORY_SEPARATOR.$file))
-                $this->recursive_copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);  
+                if(is_dir($src_path.$file))
+                $this->recursive_copy($src_path.$file.'/', $dst_path.$file.'/');  
       
-                else copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);
+                else copy($src_path.$file, $dst_path.$file);
             }  
         }
       
@@ -232,19 +232,19 @@ class stag_file_manager_functions{
         $dir = opendir($src_path);
 
         // Make the destination directory if not exist 
-        @mkdir($dst_path, 0777);
+        @mkdir($dst_path, 0777, TRUE);
       
         // Loop through the files in source directory 
         while(false !== ($file = readdir($dir))){
             if(($file != '.') && ($file != '..')){  
-                if(is_dir($src_path.DIRECTORY_SEPARATOR.$file))
-                $this->recursive_copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);  
+                if(is_dir($src_path.$file))
+                $this->recursive_move($src_path.$file.'/', $dst_path.$file.'/');  
       
                 else {
-                    copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);
+                    copy($src_path.$file, $dst_path.$file);
 
                     /** Unlink file */
-                    unlink($src_path.DIRECTORY_SEPARATOR.$file);
+                    unlink($src_path.$file);
                 }
             }  
         }
@@ -259,29 +259,18 @@ class stag_file_manager_functions{
     protected function recursive_delete($absolute_path){
         /** Open the source directory */
         $dir = opendir($absolute_path);
-
-        // count loop 
-        $loop = 0;
       
         // Loop through the files in source directory 
         while(false !== ($file = readdir($dir))){
             if(($file != '.') && ($file != '..')){
                 /** Delete directory */
-                if(is_dir($absolute_path.DIRECTORY_SEPARATOR.$file))
-                $this->recursive_delete($absolute_path.DIRECTORY_SEPARATOR.$file);
+                if(is_dir($absolute_path.$file))
+                $this->recursive_delete($absolute_path.$file.'/');
       
                 /** Unlink file */
-                else unlink($absolute_path.DIRECTORY_SEPARATOR.$file);
+                else unlink($absolute_path.$file);
             }
-
-            // increment the loop
-            $loop++;
         }
-
-        // if(3 > $loop) {
-        //     // Remove this directory
-        //     rmdir($absolute_path);
-        // }
 
         // Close directory
         closedir($dir);
@@ -299,6 +288,34 @@ class stag_file_manager_functions{
             if($destination['status'] && 'file' == $destination['type']) return FALSE;
 
             $this->recursive_copy($src_path, $dst_path);
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    protected function move_directory($src_path, $dst_path){
+        $source = $this->get_file_info($src_path);
+
+        if($source['status'] && 'directory' == $source['type']){
+            $destination = $this->get_file_info($dst_path);
+
+            if($destination['status'] && 'file' == $destination['type']) return FALSE;
+
+            $this->recursive_move($src_path, $dst_path);
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    protected function delete_directory($absolute_path){
+        $absolute_path_info = $this->get_file_info($absolute_path);
+
+        if($absolute_path_info['status'] && 'directory' == $absolute_path_info['type']){
+            $this->recursive_delete($absolute_path);
 
             return TRUE;
         }

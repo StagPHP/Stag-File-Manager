@@ -15,9 +15,6 @@ require_once 'functions.php';
  * any parameters and inside the StagPHP
  * framework */
 class stag_file_manager extends stag_file_manager_functions {
-    // rename_directory
-    // delete_directory
-
     /** */
     function get_info($absolute_path, $detailed_info = false){
         $detailed_info = $detailed_info ? TRUE : FALSE;
@@ -201,7 +198,27 @@ class stag_file_manager extends stag_file_manager_functions {
         ];
     }
 
-    function move_directory(){
-        
+    function move_directory($absolute_src_path, $absolute_dest_path){
+        if(parent::move_directory(ABSPATH.$absolute_src_path, ABSPATH.$absolute_dest_path)) return [
+            'status' => TRUE,
+            'description' => 'Directory copied!'
+        ];
+
+        return [
+            'status' => FALSE,
+            'description' => 'Failed to copy directory!'
+        ];
+    }
+
+    function delete_directory($absolute_path){
+        if(parent::delete_directory(ABSPATH.$absolute_path)) return [
+            'status' => TRUE,
+            'description' => 'Directory deleted!'
+        ];
+
+        return [
+            'status' => FALSE,
+            'description' => 'Failed to delete directory!'
+        ];
     }
 }
