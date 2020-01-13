@@ -19,16 +19,12 @@ if(!defined('ABSPATH')) define('ABSPATH', dirname(__FILE__));
 if(!defined('APP_STARTED')) define('APP_STARTED', TRUE);
 
 /** Check for the get parameters */
-if(!empty($_GET['filename']) && !empty($_GET['data'])){
-    $file_name = $_GET['filename'].'.txt';
-    $file_content = $_GET['data'];
+if(!empty($_GET['dir-name'])){
+    $dir_name = $_GET['dir-name'];
 
     $file_manager = new stag_file_manager;
 
-    $result = $file_manager->update_file(
-        '/test/'.$file_name,
-        $file_content
-    );
+    $result = $file_manager->create_directory('/test/'.$dir_name.'/');
 
     // Var dump the result
     var_dump($result);
@@ -36,6 +32,6 @@ if(!empty($_GET['filename']) && !empty($_GET['data'])){
 
 /** Error response */
 else {
-    echo 'File name or data not specified!';
+    echo 'Directory name not specified!';
     exit;
 }

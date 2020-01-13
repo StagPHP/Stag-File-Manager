@@ -9,7 +9,7 @@
  *      -> data: data which needs to be saved in a file */
 
 // Include min controller
-include 'dist/main.php';
+include 'dist/file-manager.php';
 
 // ABSPATH must be defined
 if(!defined('ABSPATH')) define('ABSPATH', dirname(__FILE__));
@@ -22,7 +22,7 @@ $file_manager = new stag_file_manager;
 
 $timestamp = (string)round(microtime(true) * 1000);
 
-$result = $file_manager->copy_file('/test/test-file.txt', '/'.$timestamp.'/test-file.txt');
+$result = $file_manager->copy_file('/test/test-file.txt', '/test/'.$timestamp.'/test-file.txt');
 
 // Var dump the result
 var_dump($result);

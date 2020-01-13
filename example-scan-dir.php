@@ -17,7 +17,7 @@ if(!defined('APP_STARTED')) define('APP_STARTED', TRUE);
 $file_manager = new stag_file_manager;
 
 // Check is the folder writable
-$result = $file_manager->get_info('/README.md', TRUE);
+$result = $file_manager->scan_directory('/test/', TRUE);
 
 // Output - var dump the result
 var_dump($result);

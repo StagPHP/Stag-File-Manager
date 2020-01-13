@@ -48,7 +48,7 @@ class stag_file_manager_functions{
                     $file_type = mime_content_type($absolute_path);
 
                     /** Last modified */
-                    $file_mod = date("Y-m-d H:i:s", filemtime($filename));
+                    $file_mod = date("Y-m-d H:i:s", filemtime($absolute_path));
 
                     /** Return detailed info */
                     return [
@@ -93,7 +93,8 @@ class stag_file_manager_functions{
 
                 return [
                     'status'      => TRUE,
-                    'type'        => 'directory'
+                    'type'        => 'directory',
+                    'is_writeable'=> $is_writeable
                 ];
             }
         }
@@ -160,17 +161,17 @@ class stag_file_manager_functions{
      * @return
      *      -> boolean: true (directory created) or false */
     protected function create_directory($absolute_path){
+        $result = $this->get_file_info($absolute_path);
+
+        if($result['status']) FALSE;
+
         /** 
          * Attempts to create the nested directories
          * specified by the absolute_path */
-        if(mkdir($absolute_path, 0777, true)) return [
-            'status' => TRUE
-        ];
+        if(@mkdir($absolute_path, 0777, true)) return TRUE;
 
         /** Return FALSE on failure */
-        return [
-            'status' => FALSE
-        ];
+        return FALSE;
     }
 
     /** 
@@ -196,5 +197,112 @@ class stag_file_manager_functions{
         return TRUE;
     }
 
-    
+    /** Delete File */
+    protected function delete_file($absolute_path){
+        $result = $this->get_file_info($absolute_path);
+
+        if($result['status'] && $result['is_writeable'] && 'file' == $result['type']) if(unlink($absolute_path)) return TRUE;
+
+        return FALSE;
+    }
+
+    protected function recursive_copy($src_path, $dst_path){  
+        // open the source directory 
+        $dir = opendir($src_path);  
+      
+        // Make the destination directory if not exist 
+        @mkdir($dst_path, 0777);
+      
+        // Loop through the files in source directory 
+        while(false !== ($file = readdir($dir))){
+            if(($file != '.') && ($file != '..')){  
+                if(is_dir($src_path.DIRECTORY_SEPARATOR.$file))
+                $this->recursive_copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);  
+      
+                else copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);
+            }  
+        }
+      
+        // Close directory
+        closedir($dir); 
+    }
+
+    protected function recursive_move($src_path, $dst_path){
+        // open the source directory 
+        $dir = opendir($src_path);
+
+        // Make the destination directory if not exist 
+        @mkdir($dst_path, 0777);
+      
+        // Loop through the files in source directory 
+        while(false !== ($file = readdir($dir))){
+            if(($file != '.') && ($file != '..')){  
+                if(is_dir($src_path.DIRECTORY_SEPARATOR.$file))
+                $this->recursive_copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);  
+      
+                else {
+                    copy($src_path.DIRECTORY_SEPARATOR.$file, $dst_path.DIRECTORY_SEPARATOR.$file);
+
+                    /** Unlink file */
+                    unlink($src_path.DIRECTORY_SEPARATOR.$file);
+                }
+            }  
+        }
+      
+        // Close directory
+        closedir($dir);
+
+        // Remove this directory
+        rmdir($src_path);
+    }
+
+    protected function recursive_delete($absolute_path){
+        /** Open the source directory */
+        $dir = opendir($absolute_path);
+
+        // count loop 
+        $loop = 0;
+      
+        // Loop through the files in source directory 
+        while(false !== ($file = readdir($dir))){
+            if(($file != '.') && ($file != '..')){
+                /** Delete directory */
+                if(is_dir($absolute_path.DIRECTORY_SEPARATOR.$file))
+                $this->recursive_delete($absolute_path.DIRECTORY_SEPARATOR.$file);
+      
+                /** Unlink file */
+                else unlink($absolute_path.DIRECTORY_SEPARATOR.$file);
+            }
+
+            // increment the loop
+            $loop++;
+        }
+
+        // if(3 > $loop) {
+        //     // Remove this directory
+        //     rmdir($absolute_path);
+        // }
+
+        // Close directory
+        closedir($dir);
+
+        // Remove this directory
+        rmdir($absolute_path);
+    }
+
+    protected function copy_directory($src_path, $dst_path){
+        $source = $this->get_file_info($src_path);
+
+        if($source['status'] && 'directory' == $source['type']){
+            $destination = $this->get_file_info($dst_path);
+
+            if($destination['status'] && 'file' == $destination['type']) return FALSE;
+
+            $this->recursive_copy($src_path, $dst_path);
+
+            return TRUE;
+        }
+
+        return FALSE;
+    }
 }

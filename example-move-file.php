@@ -18,24 +18,11 @@ if(!defined('ABSPATH')) define('ABSPATH', dirname(__FILE__));
  * environment for this script. */
 if(!defined('APP_STARTED')) define('APP_STARTED', TRUE);
 
-/** Check for the get parameters */
-if(!empty($_GET['filename']) && !empty($_GET['data'])){
-    $file_name = $_GET['filename'].'.txt';
-    $file_content = $_GET['data'];
+$file_manager = new stag_file_manager;
 
-    $file_manager = new stag_file_manager;
+$timestamp = (string)round(microtime(true) * 1000);
 
-    $result = $file_manager->update_file(
-        '/test/'.$file_name,
-        $file_content
-    );
+$result = $file_manager->move_file('/test/test-file.txt', '/test/moved/test-file.txt');
 
-    // Var dump the result
-    var_dump($result);
-}
-
-/** Error response */
-else {
-    echo 'File name or data not specified!';
-    exit;
-}
+// Var dump the result
+var_dump($result);
