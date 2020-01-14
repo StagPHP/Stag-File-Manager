@@ -1,4 +1,3 @@
-
 # Stag File Manager
 
 Stag File Manager is the part of StagPHP framework core library. This can also be used as a standalone library for your custom PHP project. You just need to follow the instructions given below. Composer support coming soon.
@@ -27,303 +26,299 @@ if(!defined('ABSPATH')) define('ABSPATH',  dirname(__FILE__));
 ### Lists of Native Methods:
 |Method Name					 |Explanation				|
 |:-------------------------------|:-------------------------|
-|[Get  info](#get-file-or-directory-info)|Retuns information about the file or directory|
+|[Get  info](#get-file-or-directory-info)|Returns information about the file or directory|
 |[Scan directory](#scan-directory)|Scan the directory for files and folders|
 |[Update file](#create-or-update-file)|Updates the file and creates it if does not exists|
 |[Copy file](#copy-file)|Creates a copy of a file|
 |[Move File](#copy-file)|Move file to another location|
-|[Delete File](#copy-file)|Delets the file permanently|
+|[Delete File](#copy-file)|Deletes the file permanently|
 |[Create Directory](#copy-file)|Creates a empty directory|
 |[Copy Directory](#copy-file)|Create a copy of the directory (**recursively**)|
 |[Move Directory](#copy-file)|Move directory to another location (**recursively**)|
-|[Delete Directory](#copy-file)|Delets the directory permanently (**recursively**)|
+|[Delete Directory](#copy-file)|Deletes the directory permanently (**recursively**)|
 
 ### Lists of Hacks:
 |Hacks					 		 |Explanation				|
 |:-------------------------------|:-------------------------|
-|[Rename file](#rename-file)|Retuns information about the file or directory|
+|[Rename file](#rename-file)|Returns information about the file or directory|
 |[Rename Directory](#rename-directory)|Updates the file and creates it if does not exists|
 |[Move to trash](#move-to-trash)|Move files and directories to trash|
 
-# Get File or Directory Info
+# Get Info
+### Basic Information
+You can follow the below listed example to get the basic information about the file or directory.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Basic Information about file
  * 
- * Get the basic information of the test.file.extension
- * file.
+ * @returns: array - status, type, is_writable */
+$basic_info = $file_manager->get_info('/filename.extension', FALSE);
+
+/** 
+ * Basic Information about directory (just pass
+ * directory path in place of file path)
  * 
  * @returns: array - status, type, is_writable */
-$basic_info = $file_manager->get_info('/test.file.extension', FALSE);
-
-/** 
- * Complete Information about file
- * 
- * Get the complete information of the test.file.extension
- * file. As this method checks for multiple parameters,
- * it takes more resourse and time for execution than
- * the previous method.
- * 
- * @returns: array - status, type, is_writable,
- * mime_type, permission, modified_time */
-$full_info = $file_manager->get_info('/test.file.extension', TRUE);
-
-/** 
- * Complete Information about directory
- * 
- * Just pass directory path in place of file path */
-$full_info = $file_manager->get_info('/test-directory/', TRUE);
+$basic_info = $file_manager->get_info('/directory/', FALSE);
 ```
-
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
-|Relative path of a file or directory|Must be relative to root|
-|Detailed Information Flag (**Boolean**) |Must be only **TRUE** or **FALSE**|
+|Relative path of a file or directory (**string**)|Must be relative to root|
+|Detailed Information Flag (**boolean**) |Use **FALSE** for basic information|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					 |Explanation 				|
 |:-------------------------------|:-------------------------|
-|status			|In boolean, **TRUE** if file exists|
-|type			|**file** or **directory** depending upon the argument passed|
-|is_writable	|In boolean, **TRUE** if file is writable|
-|mime_type 		|View [MIME Types](https://en.wikipedia.org/wiki/Media_type) (**inode/directory** in case of directory)|
-|permission		|File permissions in a octal numbers [more info](https://www.php.net/manual/en/function.fileperms.php).|
-|modified_time	|Last modified time of a file or directory **YYYY-12-30 24:60:60**|
+|status	(**boolean**) |In boolean, **TRUE** if file exists|
+|type (**string**) |**file** or **directory** depending upon the argument passed|
+|is_writable (**boolean**) |In boolean, **TRUE** if file is writable|
+
+---
+
+### Detailed Information
+You can follow the below listed example to get the detailed information about the file or directory. As this method checks for multiple parameters, it takes slightly more server resource and execution time than the previous method.
+```PHP
+$file_manager  =  new  stag_file_manager;
+
+/** 
+ * Detailed Information about file
+ * 
+ * @returns: array - status, type, size,
+ * is_writable, permission, modified_time */
+$full_info = $file_manager->get_info('/filename.extension', TRUE);
+
+/** 
+ * Detailed Information about directory (just pass
+ * directory path in place of file path)
+ * 
+ * @returns: array - status, type, size,
+ * is_writable, permission, modified_time */
+$full_info = $file_manager->get_info('/directory/', TRUE);
+```
+
+### Parameters to be passed:
+|Parameter						 |Explanation				|
+|:-------------------------------|:-------------------------|
+|Relative path of a file or directory (**string**)|Must be relative to root|
+|Detailed Information Flag (**boolean**) |Use **TRUE** for Detailed information|
+
+### Array of values returned after execution:
+|Returned keys					 |Explanation 				|
+|:-------------------------------|:-------------------------|
+|status	(**boolean**) |In boolean, **TRUE** if file exists|
+|type (**string**) |View [MIME Types](https://en.wikipedia.org/wiki/Media_type) (**inode/directory** in case of directory)|
+|size (**integer**) |File or Directory (including sub folders and files) in bytes|
+|is_writable (**boolean**) |In boolean, **TRUE** if file is writable|
+|permission	(**string**) |File permissions in a octal numbers [more info](https://www.php.net/manual/en/function.fileperms.php).|
+|modified_time (**string**) |Last modified time of a file or directory **YYYY-12-30 24:60:60**|
 
 # Scan Directory
+You can follow the below listed example to scan directory. This method scans the directory on the level specified. That means, it will not scan the contents of the sub directory inside this directory. For sub directory, you can call this method again. We have restricted the method  to scan only single level in order to boost performance.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Scan directory
  * 
- * This method scans the directory on the level
- * specified. For sub directory, you can call the
- * method again. method is restricted to the single
- * level to boost performance.
- * 
  * @returns: array - status, array of files,
  * array of directories */
 $result = $file_manager->scan_directory('/test/');
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
-|Relative path of a file or directory|Must be relative to root|
+|Relative path of a file or directory (**string**) |Path must be relative|
 
-## Array of values returned after execution:
-|Returned keys		|Explanation 	|
-|------------------------------|---------------------------|
-|status			|In boolean, **TRUE** if directory exists|
-|directories	|Array of directory names|
-|files			|Array of file names with example|
+### Array of values returned after execution:
+|Returned keys					|Explanation 				 |
+|:------------------------------|:---------------------------|
+|status (**boolean**) |In boolean, **TRUE** if directory exists|
+|directories (**string**) |Array of directory names|
+|files (**string**) |Array of file names with example|
 
 # Create or Update File
+You can follow the below listed example to create a new file or update the existing file. It creates a file when specified file does not exists and updates a file when it exists. This method also creates the directory if does not exists.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
- * Update File
- * 
- * This method scans the directory on the level
- * specified. For sub directory, you can call the
- * method again. method is restricted to the single
- * level to boost performance.
+ * Create or Update File
  * 
  * @returns: array - status, array of files,
  * array of directories */
-$result = $file_manager->update_file('/loc/'.$file_name, $file_content);
+$result = $file_manager->update_file('/directory/'.$file_name, $file_content);
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Relative path of a file (**string**)|Path of the file, which needs to be updated or where it needs to be created. Must be relative to root|
 |File content (**string**)|File content|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Copy File
+You can follow the below listed example to copy a new file from one directory location to another. This method also creates the directory if does not exists.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Copy File
  * 
- * This method scans the directory on the level
- * specified. For sub directory, you can call the
- * method again. method is restricted to the single
- * level to boost performance.
- * 
  * @returns: array - status, array of files,
  * array of directories */
-$result = $file_manager->copy_file('/loc-1/'.$file_name, '/loc-2/'.$file_name);
+$result = $file_manager->copy_file('/directory/'.$file_name, '/new-directory/'.$file_name);
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Relative path of a file (**string**)|Path of the file, which needs to be copied|
 |Relative path of a file (**string**)|New path of the file, where it needs to be copied|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Move File
+You can follow the below listed example to move a file from one directory location to another. This method also creates the directory if does not exists.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Move File
  * 
- * This method scans the directory on the level
- * specified. For sub directory, you can call the
- * method again. method is restricted to the single
- * level to boost performance.
- * 
  * @returns: array - status, array of files,
  * array of directories */
-$result = $file_manager->move_file('/loc-1/'.$file_name, '/loc-2/'.$file_name);
+$result = $file_manager->move_file('/directory/'.$file_name, '/new-directory/'.$file_name);
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Relative path of a file (**string**)|Path of the file, which needs to be moved|
 |Relative path of a file (**string**)|New path of the file, where it needs to be moved|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Delete File
+You can follow the below listed example to delete a file. This operation is nor reversible, so it deletes the file permanently.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Delete File
  * 
- * This method deletes the file specified. This
- * operation is nor reversible, so it deletes
- * the file permanetly.
- * 
  * @returns: array - status, description */
-$result = $file_manager->delete_file('/loc/'.$file_name);
+$result = $file_manager->delete_file('/directory/'.$file_name);
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Relative path of a file (**string**)|Path of the file, which needs to be deleted|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Create Directory
+You can follow the below listed example to creates a new empty directory. This fails if directory already exists.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Create Directory
  * 
- * This method creates new empty directory. This
- * fails if directory already exists.
- * 
  * @returns: array - status, description */
 $result = $file_manager->delete_directory('/new-directory/');
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Relative path of a file (**string**)|Path of the file, which needs to be deleted|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Copy Directory
+You can follow the below listed example to copy a existing directory to new location (inside another directory). This is recursive operation. This method also creates the directory if does not exists. 
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Copy Directory
  * 
- * This method creates new empty directory. This
- * fails if directory already exists.
- * 
  * @returns: array - status, description */
 $result = $file_manager->copy_directory('/directory/', '/new-loc/directory/');
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Directory Path (**string**)|Path of the directory, which needs to be copied|
 |Directory Path (**string**)|Path to new location, where directory needs to be copied|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Move Directory
+You can follow the below listed example to move a existing directory to new location (inside another directory). This is recursive operation. This method also creates the directory if does not exists.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Move Directory
  * 
- * This method creates new empty directory. This
- * fails if directory already exists.
- * 
  * @returns: array - status, description */
 $result = $file_manager->move_directory('/directory/', '/new-loc/directory/');
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Directory Path (**string**)|Path of the directory, which needs to be moved|
 |Directory Path (**string**)|Path to new location, where directory needs to be moved|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|
 
 # Delete Directory
+You can follow the below listed example to delete a directory. This is recursive operation. This operation is nor reversible, so it deletes the directory and entire files and sub directories permanently inside this directory.
 ```PHP
 $file_manager  =  new  stag_file_manager;
 
 /** 
  * Delete Directory
  * 
- * This method creates new empty directory. This
- * fails if directory already exists.
- * 
  * @returns: array - status, description */
 $result = $file_manager->delete_directory('/directory/');
 ```
-## Parameters to be passed:
+### Parameters to be passed:
 |Parameter						 |Explanation				|
 |:-------------------------------|:-------------------------|
 |Directory Path (**string**)|Path of the directory, which needs to be deleted|
 
-## Array of values returned after execution:
+### Array of values returned after execution:
 |Returned keys					|Explanation 				 |
 |:------------------------------|:---------------------------|
 |status (**boolean**) |In boolean, **TRUE** if operation was successful|
-|description (**string**) |Textual  description of te operation. Error message in case of failure|
+|description (**string**) |Success or Error message in case of failure|

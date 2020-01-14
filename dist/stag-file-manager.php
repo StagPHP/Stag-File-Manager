@@ -42,6 +42,8 @@ class stag_file_manager extends stag_file_manager_functions {
         /** Create absolute file path */
         $absolute_path = ABSPATH.$absolute_path;
 
+        $action = 'updated';
+
         /** Check absolute file path and get the response */
         $response = parent::get_file_info($absolute_path);
 
@@ -61,6 +63,8 @@ class stag_file_manager extends stag_file_manager_functions {
                 'status' => false,
                 'description' => 'Directory cannot be created!'
             ];
+
+            $action = 'created';
         }
 
         else if('directory' == $response['type']) return [
@@ -73,7 +77,8 @@ class stag_file_manager extends stag_file_manager_functions {
         /** File updated successfully => return true */
         return [
             'status' => true,
-            'description' => 'File "'.$absolute_path.'" has been updated!'
+            'absolute_path' => $absolute_path,
+            'description' => 'File has been '.$action.'!'
         ];
     }
 

@@ -9,6 +9,16 @@
 
 /** Stag file manager Base Functions */
 class stag_file_manager_functions{
+    protected function get_directory_size($absolute_path){
+        $size = 0;
+
+        foreach (glob(rtrim($absolute_path, '/').'/*', GLOB_NOSORT) as $each) {
+            $size += is_file($each) ? filesize($each) : $this->get_directory_size($each);
+        }
+
+        return $size;
+    }
+
     /** 
      * Get file info
      * 
@@ -47,14 +57,17 @@ class stag_file_manager_functions{
                     /** Get file mime type */
                     $file_type = mime_content_type($absolute_path);
 
+                    /** get file size */
+                    $file_size = filesize($absolute_path);
+
                     /** Last modified */
                     $file_mod = date("Y-m-d H:i:s", filemtime($absolute_path));
 
                     /** Return detailed info */
                     return [
                         'status'            => TRUE,
-                        'type'              => 'file',
-                        'mime_type'         => $file_type,
+                        'type'              => $file_type,
+                        'size'              => $file_size,
                         'is_writeable'      => $is_writeable,
                         'permission'        => $file_permission,
                         'modified_time'     => $file_mod
@@ -79,14 +92,17 @@ class stag_file_manager_functions{
                     /** Get file permission */
                     $file_permission = substr(sprintf('%o', fileperms($absolute_path)), -4);
 
+                    /** get file size */
+                    $folder_size = $this->get_directory_size($absolute_path);
+
                     /** Last modified */
-                    $file_mod = date("Y-m-d H:i:s", filemtime($filename.'.'));
+                    $file_mod = date("Y-m-d H:i:s", filemtime($absolute_path.'.'));
 
                     /** Return detailed info */
                     return [
                         'status'                => TRUE,
-                        'type'                  => 'file',
-                        'mime_type'             => 'inode/directory',
+                        'type'                  => 'inode/directory',
+                        'size'                  => $folder_size,
                         'is_writeable'          => $is_writeable,
                         'permission'            => $file_permission,
                         'modified_time'         => $file_mod
