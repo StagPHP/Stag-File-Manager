@@ -1,6 +1,6 @@
 # Stag File Manager
 
-Stag File Manager is the part of StagPHP framework core library. This can also be used as a standalone library for your custom PHP project. You just need to follow the instructions given below. Composer support coming soon.
+Stag File Manager is the part of StagPHP framework core library. This can also be used as a standalone library (PHP script) for file management, in your custom PHP project. You just need to follow the instructions given below. Composer support coming soon.
 
 - This library is capable of doing several complex file operation smoothly. Such as recursive copy, move, delete etc.
 - It is tested and compatible with **Linux**, **Windows** and **Unix** environment.
@@ -26,22 +26,28 @@ if(!defined('ABSPATH')) define('ABSPATH',  dirname(__FILE__));
 ### Lists of Native Methods:
 |Method Name					 |Explanation				|
 |:-------------------------------|:-------------------------|
-|[Get  info](#get-file-or-directory-info)|Returns information about the file or directory|
-|[Scan directory](#scan-directory)|Scan the directory for files and folders|
-|[Update file](#create-or-update-file)|Updates the file and creates it if does not exists|
-|[Copy file](#copy-file)|Creates a copy of a file|
+|[Get  Info](#get-file-or-directory-info)|Returns information about the file or directory|
+|[Scan Directory](#scan-directory)|Scan the directory for files and folders|
+|[Search File](#searc-file)|Perform REGEX search|
+|[Update File](#create-or-update-file)|Updates the file and creates it if does not exists|
+|[Copy File](#copy-file)|Creates a copy of a file|
 |[Move File](#copy-file)|Move file to another location|
-|[Delete File](#copy-file)|Deletes the file permanently|
-|[Create Directory](#copy-file)|Creates a empty directory|
-|[Copy Directory](#copy-file)|Create a copy of the directory (**recursively**)|
-|[Move Directory](#copy-file)|Move directory to another location (**recursively**)|
-|[Delete Directory](#copy-file)|Deletes the directory permanently (**recursively**)|
+|[Delete File](#delete-file)|Deletes the file permanently|
+|[Download File](#download-file)|Download a file from remote URL|
+|[Compress File](#compress-file)|Compress file|
+|[Extract File](#extract-file)|Extract Zip files|
+|[Create Directory](#create-directory)|Creates a empty directory|
+|[Copy Directory](#copy-directory)|Create a copy of the directory (**recursively**)|
+|[Move Directory](#move-directory)|Move directory to another location (**recursively**)|
+|[Delete Directory](#delete-directory)|Deletes the directory permanently (**recursively**)|
+|[Compress Directory](#compress-directory)|Compress the directory to Zip file|
 
 ### Lists of Hacks:
 |Hacks					 		 |Explanation				|
 |:-------------------------------|:-------------------------|
 |[Rename file](#rename-file)|Returns information about the file or directory|
 |[Rename Directory](#rename-directory)|Updates the file and creates it if does not exists|
+|[Change file extension](#change-file-extension)|Change the file extension, not type|
 |[Move to trash](#move-to-trash)|Move files and directories to trash|
 
 # Get Info
