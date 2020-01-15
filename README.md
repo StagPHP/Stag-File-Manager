@@ -1,5 +1,5 @@
 # Stag File Manager
-
+![](https://stagphp.github.io/stag-file-manager/assets/stag-file-manager.png)
 Stag File Manager is the part of StagPHP framework core library. This can also be used as a standalone library (PHP script) for file management, in your custom PHP project. You just need to follow the instructions given below. Composer support coming soon.
 
 - This library is capable of doing several complex file operation smoothly. Such as recursive copy, move, delete etc.
@@ -34,6 +34,7 @@ if(!defined('ABSPATH')) define('ABSPATH',  dirname(__FILE__));
 |[Move File](#copy-file)|Move file to another location|
 |[Delete File](#delete-file)|Deletes the file permanently|
 |[Download File](#download-file)|Download a file from remote URL|
+|[Get Remote File Content](#download-file)|Get remote file content from remote URL|
 |[Compress File](#compress-file)|Compress file|
 |[Extract File](#extract-file)|Extract Zip files|
 |[Create Directory](#create-directory)|Creates a empty directory|

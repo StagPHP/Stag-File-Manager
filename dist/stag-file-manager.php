@@ -226,4 +226,65 @@ class stag_file_manager extends stag_file_manager_functions {
             'description' => 'Failed to delete directory!'
         ];
     }
+
+    function download_file($remote_url, $absolute_path){
+        $absolute_path = ABSPATH.$absolute_path;
+
+        /** Check absolute file path and get the response */
+        $absolute_path_info = parent::get_file_info($absolute_path);
+
+        /**  */
+        if(FALSE === $absolute_path_info['status']){
+            $path_components = explode('/', $absolute_path);
+
+            $file_name = $path_components[count($path_components) - 1];
+    
+            if(empty($file_name)) return [
+                'status' => false,
+                'description' => 'Destination is not a file!'
+            ];
+
+            $absolute_dest_dir = substr($absolute_path, 0, strpos($absolute_path, $file_name));
+
+            if(!file_exists($absolute_dest_dir)) {
+                $dest_dir_created = parent::create_directory($absolute_dest_dir);
+            
+                if(FALSE === $dest_dir_created['status']) return [
+                    'status' => false,
+                    'description' => 'Directory for destination file cannot be created!'
+                ];
+            }
+        }
+
+        else if('directory' == $absolute_path_info['type']) return [
+            'status' => false,
+            'description' => 'Destination is not a file!'
+        ];
+
+
+        if(parent::download_file($remote_url, $absolute_path)) return [
+            'status' => TRUE,
+            'description' => 'File Downloaded!'
+        ];
+
+        return [
+            'status' => FALSE,
+            'description' => 'Failed to Download File!'
+        ];
+    }
+
+    function get_remote_file_content($remote_url){
+        $content = parent::download_file($remote_url, NULL);
+
+        if(FALSE !== $content) return [
+            'status' => TRUE,
+            'content' => $content,
+            'description' => 'Remote File Content Fetched!'
+        ];
+
+        return [
+            'status' => FALSE,
+            'description' => 'Failed to Fetch Remote File Content!'
+        ];
+    }
 }

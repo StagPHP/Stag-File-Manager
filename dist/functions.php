@@ -9,16 +9,6 @@
 
 /** Stag file manager Base Functions */
 class stag_file_manager_functions{
-    protected function get_directory_size($absolute_path){
-        $size = 0;
-
-        foreach (glob(rtrim($absolute_path, '/').'/*', GLOB_NOSORT) as $each) {
-            $size += is_file($each) ? filesize($each) : $this->get_directory_size($each);
-        }
-
-        return $size;
-    }
-
     /** 
      * Get file info
      * 
@@ -192,6 +182,16 @@ class stag_file_manager_functions{
         return FALSE;
     }
 
+    protected function get_directory_size($absolute_path){
+        $size = 0;
+
+        foreach (glob(rtrim($absolute_path, '/').'/*', GLOB_NOSORT) as $each) {
+            $size += is_file($each) ? filesize($each) : $this->get_directory_size($each);
+        }
+
+        return $size;
+    }
+
     /** 
      * Save the file
      * 
@@ -339,5 +339,41 @@ class stag_file_manager_functions{
         }
 
         return FALSE;
+    }
+
+    protected function download_file($remote_url, $absolute_path){
+        /** Download file flag */
+        $download_file = FALSE;
+
+        /** Check for provided absolute path */
+        if(!empty($absolute_path)){
+            $file = @fopen($absolute_path, "w");
+
+            if(FALSE === $file) return FALSE;
+
+            $download_file = TRUE;
+        }
+
+        // Get The Zip File From Server
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $remote_url);
+        curl_setopt($curl, CURLOPT_FAILONERROR, true);
+        curl_setopt($curl, CURLOPT_HEADER, 0);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+        curl_setopt($curl, CURLOPT_BINARYTRANSFER,true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); 
+        if($download_file) curl_setopt($curl, CURLOPT_FILE, $file);
+        $result = curl_exec($curl);
+        curl_close($curl);
+
+        if(FALSE === $result) return FALSE;
+        else {
+            if($download_file) return TRUE;
+            else return $result;
+        }
     }
 }
