@@ -9,123 +9,214 @@
 
 /** Stag file manager Base Functions */
 class stag_file_manager_functions{
-    /** 
-     * Get file info
-     * 
-     * Return file or directory detailed information
-     * 
-     * @param
-     *      -> absolute_path: of the file or directory which needed to be checked
-     *      -> detailed_info: flag to retrieve detailed info
-     * 
-     * @return
-     *      -> file_info: detailed file or directory information
-     *      -> false: incase file don't exists */
-    protected function get_file_info($absolute_path, $detailed_info = FALSE){
+    /** Quick Scan -> stores total file count */
+    private $file_count;
+
+    /** Quick Scan -> stores total directory count */
+    private $directory_count;
+
+    /** Deep scan root directory */
+    private $deep_scan_root;
+
+    /** Create the path */
+    protected function create_path($relative_path, $file){
+        /** Remove unnecessary slashes from path 
+         * and add slash at the begining */
+        $relative_path = preg_replace('#/+#', '/', '/'.$relative_path);
+
+        /** Remove extra forward slash from right */
+        $relative_path = rtrim($relative_path.'/', '/');
+
+        /** Create absolute path */
+        $absolute_path = ABSPATH.$relative_path;
+
+        if(TRUE === $file) return $absolute_path;
+        else return $absolute_path.'/';
+    }
+
+    /** Get information related to the path */
+    protected function get_info($relative_path){
+        /** Create absolute path */
+        $absolute_path = $this->create_path($relative_path, TRUE);
+
+        /** Is Writeable Flag */
         $is_writeable = FALSE;
 
-        /** 
-         * Checks whether the absolute file belongs to
-         * a file or a directory exists or not */
+        /** Clears the file status cache */
+        clearstatcache();
+
+        /** Checks whether the absolute path exists */
         if(file_exists($absolute_path)){
             /** Check if the file or directory writable */
             if(is_writable($absolute_path)) $is_writeable = TRUE;
 
-            /** 
-             * Check whether it is a file or a directory
-             * 
-             * Check for file */
+            /** Checks whether the absolute path belongs to
+             * a file or a directory */
             if(is_file($absolute_path)) {
-                /** Return detailed info */
-                if($detailed_info){
-                    /** Clears the file status cache */
-                    clearstatcache();
-    
-                    /** Get file permission */
-                    $file_permission = substr(sprintf('%o', fileperms($absolute_path)), -4);
-
-                    /** Get file mime type */
-                    $file_type = mime_content_type($absolute_path);
-
-                    /** get file size */
-                    $file_size = filesize($absolute_path);
-
-                    /** Last modified */
-                    $file_mod = date("Y-m-d H:i:s", filemtime($absolute_path));
-
-                    /** Return detailed info */
-                    return [
-                        'status'            => TRUE,
-                        'type'              => $file_type,
-                        'size'              => $file_size,
-                        'is_writeable'      => $is_writeable,
-                        'permission'        => $file_permission,
-                        'modified_time'     => $file_mod
-                    ];
-                }
-                
-                /** Return minimal info */
-                else return [
-                    'status'      => TRUE,
-                    'type'        => 'file',
-                    'is_writeable'=> $is_writeable
+                return [
+                    'status'        => TRUE,
+                    'type'          => 'file',
+                    'absolute_path' => $absolute_path ,
+                    'is_writeable'  => $is_writeable
                 ];
             }
             
-            /** Check for directory */
-            else {
-                /** Return detailed info */
-                if($detailed_info){
-                    /** Clears the file status cache */
-                    clearstatcache();
-    
-                    /** Get file permission */
-                    $file_permission = substr(sprintf('%o', fileperms($absolute_path)), -4);
-
-                    /** get file size */
-                    $folder_size = $this->get_directory_size($absolute_path);
-
-                    /** Last modified */
-                    $file_mod = date("Y-m-d H:i:s", filemtime($absolute_path.'.'));
-
-                    /** Return detailed info */
-                    return [
-                        'status'                => TRUE,
-                        'type'                  => 'inode/directory',
-                        'size'                  => $folder_size,
-                        'is_writeable'          => $is_writeable,
-                        'permission'            => $file_permission,
-                        'modified_time'         => $file_mod
-                    ];
-                }
-
-                return [
-                    'status'      => TRUE,
-                    'type'        => 'directory',
-                    'is_writeable'=> $is_writeable
-                ];
-            }
+            else return [
+                'status'        => TRUE,
+                'type'          => 'directory',
+                'absolute_path' => $absolute_path.'/',
+                'is_writeable'  => $is_writeable
+            ];
         }
-        
+
         /** Return false if does not exists */
         return [
             'status'      => FALSE,
-            'description' => 'Directory or file does not exits'
+            'description' => 'Directory or file does not exits!'
         ];
     }
 
-    /** 
-     * Scan directory
-     * 
-     * Return the list of files or directories
-     * 
-     * @param
-     *      -> absolute_path: of the directory which needed to be scanned
-     * 
-     * @return
-     *      -> boolean: true and false (incase directory don't exists)
-     *      -> list: array of directories and files */
-    protected function scan_directory($absolute_path){
+    /** Get file properties */
+    protected function file_properties($absolute_path){
+        /** Clears the file status cache */
+        clearstatcache();
+
+        if(file_exists($absolute_path) && is_file($absolute_path)){
+            /** Get file mime type */
+            $file_type = mime_content_type($absolute_path);
+
+            /** get file size */
+            $file_size = filesize($absolute_path);
+
+            /** Get file permission */
+            $file_permission = substr(sprintf('%o', fileperms($absolute_path)), -4);
+
+            /** Last modified */
+            $file_modified_time = date("Y-m-d H:i:s", filemtime($absolute_path));
+
+            /** Return file property */
+            return [
+                'status'            => TRUE,
+                'type'              => $file_type,
+                'size'              => $file_size,
+                'permission'        => $file_permission,
+                'modified_time'     => $file_modified_time
+            ];
+        }
+
+        /** Return false if does not exists */
+        return array(
+            'status'      => FALSE,
+            'description' => 'File does not exists!'
+        );
+    }
+
+    /** Helper Function: Quikly scan directory */
+    protected function quick_scan($absolute_path){
+        $size = 0;
+
+        foreach (glob(rtrim($absolute_path, '/').'/*', GLOB_NOSORT) as $each) {
+            if(is_file($each)){
+                $size += filesize($each);
+                $this->file_count++;
+            } else {
+                $size += $this->quick_scan($each);
+                $this->file_count++;
+            }
+        }
+
+        return $size;
+    }
+
+    /** Get directory properties */
+    protected function directory_properties($absolute_path){
+        /** Clears the file status cache */
+        clearstatcache();
+
+        if(file_exists($absolute_path) && is_dir($absolute_path)){
+            /** Get file permission */
+            $directory_permission = substr(sprintf('%o', fileperms($absolute_path)), -4);
+
+            /** Reset directory count */
+            $this->directory_count = 0;
+
+            /** Reset file count */
+            $this->file_count = 0;
+
+            /** Quick scan directory 
+             * returns: directory size
+             * Sets: directory and file count */
+            $directory_size = $this->quick_scan($absolute_path);
+
+            /** Last modified */
+            $directory_modified_time = date("Y-m-d H:i:s", filemtime($absolute_path.'.'));
+
+            /** Return file property */
+            return [
+                'status'            => TRUE,
+                'size'              => $directory_size,
+                'total_directories' => $this->directory_count,
+                'total_files'       => $this->file_count,
+                'permission'        => $directory_permission,
+                'modified_time'     => $directory_modified_time
+            ];
+        }
+
+        /** Return false if does not exists */
+        return [
+            'status'      => FALSE,
+            'description' => 'Directory does not exists!'
+        ];
+    }
+
+    /** Helper Function: Recursive directory scan */
+    protected function recursive_directory_scan($absolute_path){
+        $directory_structure = array();
+
+        /** Default PHP function to scan directory */
+        $items_array = scandir($absolute_path);
+        
+        foreach($items_array as $item) if(!in_array($item, array(".",".."))){
+            $relative_path = str_replace($this->deep_scan_root, '/', $absolute_path);
+            $directory_name = basename($absolute_path);
+
+            if(is_dir($absolute_path.$directory_name)){
+                $temp_array = array(
+                    'type'          => 'folder',
+                    'name'          => $directory_name,
+                    'relative_path' => $relative_path.$directory_name.'/',
+                    'sub_directory' => $this->recursive_directory_scan($absolute_path.$directory_name.'/')
+                );
+    
+                array_push($directory_structure, $temp_array);
+            } else {
+                $file_array = array(
+                    'type'          => 'file',
+                    'name'          => basename($relative_path),
+                    'relative_path' => $relative_path
+                );
+    
+                array_push($directory_structure, $file_array);
+            }
+        }
+
+        return $directory_structure;
+    }
+
+    /** Deep scan directory for all the files and folder */
+    protected function deep_directory_scan($absolute_path){
+        /** Clears the file status cache */
+        clearstatcache();
+
+        /** Set deep scan root */
+        $this->deep_scan_root = str_replace(ABSPATH, '/', $absolute_path);
+
+        /** Recursivley scan directory */
+        return $this->recursive_directory_scan($absolute_path);
+    }
+
+    /** Single level directory scan */
+    protected function directory_scan($absolute_path){
         /** Defining blank array */
         $directories = $files = array();
 
@@ -138,7 +229,7 @@ class stag_file_manager_functions{
             foreach($response as $key => $value){
                 if(!in_array($value, array(".",".."))){
                     /** Create array of directories */
-                    if(is_dir($absolute_path.'/'.$value)) array_push($directories, $value);
+                    if(is_dir($absolute_path.$value)) array_push($directories, $value);
 
                     // Create array of files
                     else array_push($files, $value);
@@ -160,21 +251,9 @@ class stag_file_manager_functions{
         ];
     }
 
-    /** 
-     * Create nested directory
-     * 
-     * @param
-     *      -> absolute_path: of the directory which needed to be created
-     * 
-     * @return
-     *      -> boolean: true (directory created) or false */
+    /** Create nested directory */
     protected function create_directory($absolute_path){
-        $result = $this->get_file_info($absolute_path);
-
-        if($result['status']) FALSE;
-
-        /** 
-         * Attempts to create the nested directories
+        /** Attempts to create the nested directories
          * specified by the absolute_path */
         if(@mkdir($absolute_path, 0777, true)) return TRUE;
 
@@ -182,28 +261,7 @@ class stag_file_manager_functions{
         return FALSE;
     }
 
-    protected function get_directory_size($absolute_path){
-        $size = 0;
-
-        foreach (glob(rtrim($absolute_path, '/').'/*', GLOB_NOSORT) as $each) {
-            $size += is_file($each) ? filesize($each) : $this->get_directory_size($each);
-        }
-
-        return $size;
-    }
-
-    /** 
-     * Save the file
-     * 
-     * If file does not exists, it creates and save the content
-     * otherwise it replace the old file content with new content
-     * 
-     * @param
-     *      -> absolute_path: of the file which needed to be saved
-     *      -> content: content of the file
-     * 
-     * @return
-     *      -> boolean: true (directory created) or false */
+    /** Create file */
     protected function save_file($absolute_path, $content){
         /** creates a file if does not exists  */
         $result = file_put_contents($absolute_path, $content, LOCK_EX);
@@ -217,9 +275,7 @@ class stag_file_manager_functions{
 
     /** Delete File */
     protected function delete_file($absolute_path){
-        $result = $this->get_file_info($absolute_path);
-
-        if($result['status'] && $result['is_writeable'] && 'file' == $result['type']) if(unlink($absolute_path)) return TRUE;
+        if(unlink($absolute_path)) return TRUE;
 
         return FALSE;
     }
@@ -374,6 +430,43 @@ class stag_file_manager_functions{
         else {
             if($download_file) return TRUE;
             else return $result;
+        }
+    }
+
+    protected function extract_zip_file($zip_loc, $extract_loc){
+        $zip_loc_info = $this->get_file_info($zip_loc);
+
+        if($zip_loc_info['status'] && 'file' == $zip_loc_info['type']){
+            /** Zip Archive Class */
+            $zip = new ZipArchive;
+
+            /** Open zip file */
+            $zip_content = $zip->open($zip_loc);
+
+            /** Get the absolute path to zip file
+             * in order to extract it o same directory */
+            if(empty($extract_loc)) $extract_loc = pathinfo(realpath($zip_loc), PATHINFO_DIRNAME);
+
+            /** Returns TRUE on success */
+            if(TRUE === $zip_content){
+                $zip_content->extractTo($extract_loc);
+                $zip_content->close();
+                return TRUE;
+            }
+        }
+    
+        return FALSE;
+    }
+
+    protected function create_zip($zip_location){
+        $zip = new ZipArchive;
+        if($zip->open($zip_location, ZipArchive::OVERWRITE) === TRUE){
+            foreach($absolute_files as $absolute_file){
+                $zip->addFile($absolute_file, $absolute_file);
+            }
+        
+            // All files are added, so close the zip file.
+            $zip->close();
         }
     }
 }

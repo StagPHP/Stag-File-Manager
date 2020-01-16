@@ -8,21 +8,58 @@
 
 require_once 'functions.php';
 
-/** 
- * Stag file manager 
+/** Stag file manager 
  * 
  * This class must be initialized without
  * any parameters and inside the StagPHP
  * framework */
 class stag_file_manager extends stag_file_manager_functions {
-    /** */
-    function get_info($absolute_path, $detailed_info = false){
-        $detailed_info = $detailed_info ? TRUE : FALSE;
-
-        return parent::get_file_info(ABSPATH.$absolute_path, $detailed_info);
+    /** Get file info
+     * 
+     * Description: Return baisc information related 
+     * to file or directory
+     * 
+     * @param string $absolute_path
+     * Description: absolute path of the file or 
+     * directory which needed to be checked
+     * 
+     * @return array
+     * Check documentation for more information */
+    function get_info($relative_path){
+        return parent::get_info($relative_path);
     }
 
-    function scan_directory($absolute_path){
+    function get_file_properties($relative_path){
+        /** get file info for processing */
+        $file_info = parent::get_info($relative_path);
+
+        /** Get file properties for a valid file type */
+        if(TRUE === $file_info['status'] && 'file' == $file_info['type'])
+        return parent::file_properties($file_info['absolute_path']);
+
+        /** Return error for invalid file type */
+        return array(
+            'status'      => FALSE,
+            'description' => 'File does not exists!'
+        );
+    }
+
+    function get_directory_properties($relative_path){
+        /** get file info for processing */
+        $directory_info = parent::get_info($relative_path);
+
+        /** Get file properties for a valid file type */
+        if(TRUE === $directory_info['status'] && 'directory' == $directory_info['type'])
+        return parent::directory_properties($directory_info['absolute_path']);
+
+        /** Return error for invalid file type */
+        return array(
+            'status'      => FALSE,
+            'description' => 'Directory does not exists!'
+        );
+    }
+
+    function scan_directory($relative_path){
         return parent::scan_directory(ABSPATH.$absolute_path);
     }
 

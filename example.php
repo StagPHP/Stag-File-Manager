@@ -14,58 +14,62 @@ $list_visible = TRUE;
 if(!empty($_GET['example'])){
     switch((int)$_GET['example']) {
         case 1:
-            include 'examples/1-get-basic-info.php';
+            include 'examples/get-info.php';
             $list_visible = FALSE;
             break;
         case 2:
-            include 'examples/2-get-detailed-info.php';
+            include 'examples/file-properties.php';
             $list_visible = FALSE;
             break;
         case 3:
-            include 'examples/3-scan-directory.php';
+            include 'examples/directory-properties.php';
             $list_visible = FALSE;
             break;
         case 4:
-            include 'examples/4-create-file.php';
+            include 'examples/scan-directory.php';
             $list_visible = FALSE;
             break;
         case 5:
-            include 'examples/5-update-file.php';
+            include 'examples/4-create-file.php';
             $list_visible = FALSE;
             break;
         case 6:
-            include 'examples/6-copy-file.php';
+            include 'examples/5-update-file.php';
             $list_visible = FALSE;
             break;
         case 7:
-            include 'examples/7-move-file.phpp';
+            include 'examples/6-copy-file.php';
             $list_visible = FALSE;
             break;
         case 8:
-            include 'examples/8-delete-file.php';
+            include 'examples/7-move-file.phpp';
             $list_visible = FALSE;
             break;
         case 9:
-            include 'examples/9-create-directory.php';
+            include 'examples/8-delete-file.php';
             $list_visible = FALSE;
             break;
         case 10:
-            include 'examples/10-copy-directory.php';
+            include 'examples/9-create-directory.php';
             $list_visible = FALSE;
             break;
         case 11:
-            include 'examples/11-move-directory.php';
+            include 'examples/10-copy-directory.php';
             $list_visible = FALSE;
             break;
         case 12:
-            include 'examples/12-delete-directory.php';
+            include 'examples/11-move-directory.php';
             $list_visible = FALSE;
             break;
         case 13:
-            include 'examples/13-download-file.php';
+            include 'examples/12-delete-directory.php';
             $list_visible = FALSE;
             break;
         case 14:
+            include 'examples/13-download-file.php';
+            $list_visible = FALSE;
+            break;
+        case 15:
             include 'examples/14-get-remote-file-content.php';
             $list_visible = FALSE;
             break;
