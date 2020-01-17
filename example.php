@@ -26,55 +26,59 @@ if(!empty($_GET['example'])){
             $list_visible = FALSE;
             break;
         case 4:
-            include 'examples/scan-directory.php';
+            include 'examples/directory_scan.php';
             $list_visible = FALSE;
             break;
         case 5:
-            include 'examples/4-create-file.php';
+            include 'examples/deep_directory_scan.php';
             $list_visible = FALSE;
             break;
         case 6:
-            include 'examples/5-update-file.php';
+            include 'examples/create-file.php';
             $list_visible = FALSE;
             break;
         case 7:
-            include 'examples/6-copy-file.php';
+            include 'examples/update-file.php';
             $list_visible = FALSE;
             break;
         case 8:
-            include 'examples/7-move-file.phpp';
+            include 'examples/copy-file.php';
             $list_visible = FALSE;
             break;
         case 9:
-            include 'examples/8-delete-file.php';
+            include 'examples/move-file.php';
             $list_visible = FALSE;
             break;
         case 10:
-            include 'examples/9-create-directory.php';
+            include 'examples/delete-file.php';
             $list_visible = FALSE;
             break;
         case 11:
-            include 'examples/10-copy-directory.php';
+            include 'examples/create-directory.php';
             $list_visible = FALSE;
             break;
         case 12:
-            include 'examples/11-move-directory.php';
+            include 'examples/copy-directory.php';
             $list_visible = FALSE;
             break;
         case 13:
-            include 'examples/12-delete-directory.php';
+            include 'examples/move-directory.php';
             $list_visible = FALSE;
             break;
         case 14:
-            include 'examples/13-download-file.php';
+            include 'examples/delete-directory.php';
             $list_visible = FALSE;
             break;
         case 15:
-            include 'examples/14-get-remote-file-content.php';
+            include 'examples/download-file.php';
+            $list_visible = FALSE;
+            break;
+        case 16:
+            include 'examples/get-remote-file-content.php';
             $list_visible = FALSE;
             break;
     }
-} 
+}
 
 $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2); ?>
 
@@ -118,72 +122,82 @@ $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2); ?>
         <?php if($list_visible): ?>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=1'; ?>" target="_blank">1. Example: Get Basic Info</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=1'; ?>" target="_blank">Example: Get Basic Info</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=2'; ?>" target="_blank">2. Example: Get Detailed Info</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=2'; ?>" target="_blank">Example: Get File Properties</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=3'; ?>" target="_blank">3. Example: Scan Directory</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=3'; ?>" target="_blank">Example: Get Directory Properties</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=4'; ?>" target="_blank">4. Example: Create File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=4'; ?>" target="_blank">Example: Directory Scan</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=5'; ?>" target="_blank">5. Example: Update File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=5'; ?>" target="_blank">Example: Deep Directory Scan</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=6'; ?>" target="_blank">6. Example: Copy File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=6'; ?>" target="_blank">Example: Create File</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=7'; ?>" target="_blank">7. Example: Move File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=7'; ?>" target="_blank">Example: Update File</a>
             </div>
         </div>
         <div  style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=8'; ?>" target="_blank">8. Example: Delete File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=8'; ?>" target="_blank">Example: Copy File</a>
+            </div>
+        </div>
+        <div  style="padding: 0px;">
+            <div style="padding: 20px; border-bottom: 1px solid #ddd;">
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=9'; ?>" target="_blank">Example: Move File</a>
+            </div>
+        </div>
+        <div  style="padding: 0px;">
+            <div style="padding: 20px; border-bottom: 1px solid #ddd;">
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=10'; ?>" target="_blank">Example: Delete File</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=9'; ?>" target="_blank">9. Example: Create Directory</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=11'; ?>" target="_blank">Example: Create Directory</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=10'; ?>" target="_blank">10. Example: Copy Directory</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=12'; ?>" target="_blank">Example: Copy Directory</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=11'; ?>" target="_blank">11. Example: Move Directory</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=13'; ?>" target="_blank">Example: Move Directory</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=12'; ?>" target="_blank">12. Example: Delete Directory</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=14'; ?>" target="_blank">Example: Delete Directory</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="padding: 20px; border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=13'; ?>" target="_blank">13. Example: Download File</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=15'; ?>" target="_blank">Example: Download File</a>
             </div>
         </div>
         <div style="padding: 0px;">
             <div style="border-bottom: 1px solid #ddd;">
-                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=14'; ?>" target="_blank">14. Example: Get Remote File Content</a>
+                <a href="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$uri_parts[0].'?example=16'; ?>" target="_blank">Example: Get Remote File Content</a>
             </div>
         </div>
         <?php endif; ?>

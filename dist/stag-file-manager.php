@@ -16,7 +16,7 @@ require_once 'functions.php';
 class stag_file_manager extends stag_file_manager_functions {
     /** Get file info
      * 
-     * Description: Return baisc information related 
+     * Description: Return basic information related 
      * to file or directory
      * 
      * @param string $absolute_path
@@ -59,12 +59,37 @@ class stag_file_manager extends stag_file_manager_functions {
         );
     }
 
-    function scan_directory($relative_path){
-        return parent::scan_directory(ABSPATH.$absolute_path);
+    function directory_scan($relative_path){
+        /** get file info for processing */
+        $directory_info = parent::get_info($relative_path);
+
+        /** Get file properties for a valid file type */
+        if(TRUE === $directory_info['status'] && 'directory' == $directory_info['type'])
+        return parent::directory_scan($directory_info['absolute_path']);
+
+        /** Return false if directory does not exists */
+        return [
+            'status'      => FALSE,
+            'description' => '"'.$absolute_path.'" is not a directory!'
+        ];
     }
 
-    /** 
-     * Get file info
+    function deep_directory_scan($relative_path){
+        /** get file info for processing */
+        $directory_info = parent::get_info($relative_path);
+
+        /** Get file properties for a valid file type */
+        if(TRUE === $directory_info['status'] && 'directory' == $directory_info['type'])
+        return parent::deep_directory_scan($directory_info['absolute_path']);
+
+        /** Return false if directory does not exists */
+        return [
+            'status'      => FALSE,
+            'description' => '"'.$absolute_path.'" is not a directory!'
+        ];
+    }
+
+    /** Get file info
      * 
      * Return file or directory detailed information
      * 
@@ -75,105 +100,108 @@ class stag_file_manager extends stag_file_manager_functions {
      * @return
      *      -> file_info: detailed file or directory information
      *      -> false: incase file don't exists */
-    function update_file($absolute_path, $content){
-        /** Create absolute file path */
-        $absolute_path = ABSPATH.$absolute_path;
-
+    function update_file($relative_path, $content){
+        /** action */
         $action = 'updated';
 
-        /** Check absolute file path and get the response */
-        $response = parent::get_file_info($absolute_path);
+        /** Get file info for processing */
+        $file_info = parent::get_info($relative_path);
 
-        if(FALSE === $response['status']){
-            $path_components = explode('/', $absolute_path);
+        /** File does not exists */
+        if(FALSE === $file_info['status']){
+            /** Create path for the new file */
+            $file_path = parent::create_path($relative_path, TRUE);
 
-            $file_name = $path_components[count($path_components) - 1];
-    
-            if(empty($file_name)) return [
+            /** Create directory to save file, and
+             * set action to updated */
+            if(parent::create_directory_for_file($file_path)) {
+                $absolute_file_path = $file_path;
+                $action = 'created';
+            }
+
+            else return [
                 'status' => false,
-                'description' => 'Filename is empty!'
+                'description' => 'Specified file path is not valid!'
             ];
-
-            $new_directory_path = substr($absolute_path, 0, strpos($absolute_path, $file_name));
-
-            if(!file_exists($new_directory_path)) if(!parent::create_directory($new_directory_path)) return [
-                'status' => false,
-                'description' => 'Directory cannot be created!'
-            ];
-
-            $action = 'created';
         }
 
-        else if('directory' == $response['type']) return [
+        /** Return false: If relative file specified
+         * contains the path of a directory
+         * instead of the file */
+        else if('directory' == $file_info['type']) return [
             'status' => false,
-            'description' => 'Not a valid filename!'
+            'description' => 'Specified file path is not valid!'
         ];
 
-        parent::save_file($absolute_path, $content);
+        else $absolute_file_path = $file_info['absolute_path'];
 
-        /** File updated successfully => return true */
+        /** Finally save file */
+        parent::save_file($absolute_file_path, $content);
+
+        /** File updated successfully */
         return [
             'status' => true,
-            'absolute_path' => $absolute_path,
+            'absolute_path' => $absolute_file_path,
             'description' => 'File has been '.$action.'!'
         ];
     }
 
-    function copy_file($absolute_src_path, $absolute_dest_path){
-        /** Create absolute file path */
-        $absolute_src_path = ABSPATH.$absolute_src_path;
+    function copy_file($relative_src_path, $relative_dest_path){
+        /** action */
+        $action = 'copied and overwritten';
 
-        /** Check absolute file path and get the response */
-        $response = parent::get_file_info($absolute_src_path);
+        /** Get source path info for processing */
+        $src_file_info = parent::get_info($relative_src_path);
 
-        if(FALSE === $response['status']) return [
+        if(FALSE === $src_file_info['status']) return [
             'status' => false,
             'description' => 'Source file not found!'
         ];
 
-        else if('directory' == $response['type']) return [
+        else if('directory' == $src_file_info['type']) return [
             'status' => false,
             'description' => 'Source is not a file!'
         ];
 
-        $absolute_dest_path = ABSPATH.$absolute_dest_path;
+        $absolute_src_file_path = $src_file_info['absolute_path'];
 
-        /** Check absolute file path and get the response */
-        $response = parent::get_file_info($absolute_dest_path);
+        /** Get destination path info for processing */
+        $dest_file_info = parent::get_info($relative_dest_path);
 
-        /**  */
-        if(FALSE === $response['status']){
-            $path_components = explode('/', $absolute_dest_path);
+        /** File does not exists */
+        if(FALSE === $dest_file_info['status']){
+            /** Create path for the new file */
+            $file_path = parent::create_path($relative_dest_path, TRUE);
 
-            $file_name = $path_components[count($path_components) - 1];
-    
-            if(empty($file_name)) return [
-                'status' => false,
-                'description' => 'Destination is not a file!'
-            ];
-
-            $absolute_dest_dir = substr($absolute_dest_path, 0, strpos($absolute_dest_path, $file_name));
-
-            if(!file_exists($absolute_dest_dir)) {
-                $dest_dir_created = parent::create_directory($absolute_dest_dir);
-            
-                if(FALSE === $dest_dir_created['status']) return [
-                    'status' => false,
-                    'description' => 'Directory for destination file cannot be created!'
-                ];
+            /** Create directory to save file, and
+             * set action to updated */
+            if(parent::create_directory_for_file($file_path)) {
+                $absolute_dest_file_path = $file_path;
+                $action = 'copied';
             }
+
+            else return [
+                'status' => false,
+                'description' => 'Specified file path is not valid!'
+            ];
         }
 
-        else if('directory' == $response['type']) return [
+        /** Return false: If relative file specified
+         * contains the path of a directory
+         * instead of the file */
+        else if('directory' == $dest_file_info['type']) return [
             'status' => false,
-            'description' => 'Destination is not a file!'
+            'description' => 'Specified file path is not valid!'
         ];
 
-        if(copy($absolute_src_path, $absolute_dest_path)) return [
-            'status' => true,
-            'description' => 'File successfully copied to loc: "'.$absolute_dest_path
+        else $absolute_dest_file_path = $dest_file_info['absolute_path'];
+
+        if(copy($absolute_src_file_path, $absolute_dest_file_path)) return [
+            'status'            => true,
+            'source_file_path'  => $absolute_src_file_path,
+            'file_path'         => $absolute_dest_file_path,
+            'description'       => 'File successfully '.$action.'!'
         ];
-          
           
         else return [
             'status' => false,
@@ -181,31 +209,92 @@ class stag_file_manager extends stag_file_manager_functions {
         ];
     }
 
-    function move_file($absolute_src_path, $absolute_dest_path){
-        $copy = $this->copy_file($absolute_src_path, $absolute_dest_path);
+    function move_file($relative_src_path, $relative_dest_path){
+        /** action */
+        $action = 'moved and overwritten';
 
-        if($copy['status']){
-            $delete = parent::delete_file(ABSPATH.$absolute_src_path);
+        /** Get source path info for processing */
+        $src_file_info = parent::get_info($relative_src_path);
 
-            if($delete) return [
-                'status' => TRUE,
-                'description' => 'File moved to destination: '.$absolute_dest_path
-            ];
-            
+        if(FALSE === $src_file_info['status']) return [
+            'status' => false,
+            'description' => 'Source file not found!'
+        ];
+
+        else if('directory' == $src_file_info['type']) return [
+            'status' => false,
+            'description' => 'Source is not a file!'
+        ];
+
+        $absolute_src_file_path = $src_file_info['absolute_path'];
+
+        /** Get destination path info for processing */
+        $dest_file_info = parent::get_info($relative_dest_path);
+
+        /** File does not exists */
+        if(FALSE === $dest_file_info['status']){
+            /** Create path for the new file */
+            $file_path = parent::create_path($relative_dest_path, TRUE);
+
+            /** Create directory to save file, and
+             * set action to updated */
+            if(parent::create_directory_for_file($file_path)) {
+                $absolute_dest_file_path = $file_path;
+                $action = 'moved';
+            }
+
             else return [
-                'status' => FALSE,
-                'description' => 'File copied to "'.$absolute_dest_path.'". But failed to delete the source file!'
+                'status' => false,
+                'description' => 'Specified file path is not valid!'
             ];
         }
 
-        return [
-            'status' => FALSE,
+        /** Return false: If relative file specified
+         * contains the path of a directory
+         * instead of the file */
+        else if('directory' == $dest_file_info['type']) return [
+            'status' => false,
+            'description' => 'Specified file path is not valid!'
+        ];
+
+        else $absolute_dest_file_path = $dest_file_info['absolute_path'];
+
+        if(copy($absolute_src_file_path, $absolute_dest_file_path)) {
+            $deleted = parent::delete_file($absolute_src_file_path);
+
+            if($deleted) return [
+                'status'            => TRUE,
+                'file_path'         => $absolute_dest_file_path,
+                'description'       => 'File successfully '.$action.'!'
+            ];
+            
+            return [
+                'status' => FALSE,
+                'description' => 'File moved, but failed to delete the source file!'
+            ];
+        }
+          
+        else return [
+            'status' => false,
             'description' => 'Failed to move file!'
         ];
     }
 
-    function delete_file($absolute_path){
-        if(parent::delete_file(ABSPATH.$absolute_path)) return [
+    function delete_file($relative_path){
+        /** Get source path info for processing */
+        $file_info = parent::get_info($relative_path);
+
+        if(FALSE === $file_info['status']) return [
+            'status' => false,
+            'description' => 'File not found!'
+        ];
+
+        else if('directory' == $file_info['type']) return [
+            'status' => false,
+            'description' => 'Invalid file!'
+        ];
+
+        if(parent::delete_file($file_info['absolute_path'])) return [
             'status' => TRUE,
             'description' => 'File deleted!'
         ];
@@ -216,8 +305,21 @@ class stag_file_manager extends stag_file_manager_functions {
         ];
     }
 
-    function create_directory($absolute_path){
-        if(parent::create_directory(ABSPATH.$absolute_path)) return [
+    function create_directory($relative_path){
+        /** Get destination path info for processing */
+        $path_info = parent::get_info($relative_path);
+
+        if($path_info['status'] && 'file' == $path_info['type']) return [
+            'status' => FALSE,
+            'description' => 'Invalid directory name!'
+        ];
+
+        else if($path_info['status']) return [
+            'status' => TRUE,
+            'description' => 'Directory already exists!'
+        ];
+
+        if(parent::create_empty_directory($path_info['absolute_path'])) return [
             'status' => TRUE,
             'description' => 'Directory created!'
         ];
@@ -228,78 +330,128 @@ class stag_file_manager extends stag_file_manager_functions {
         ];
     }
 
-    function copy_directory($absolute_src_path, $absolute_dest_path){
-        if(parent::copy_directory(ABSPATH.$absolute_src_path, ABSPATH.$absolute_dest_path)) return [
-            'status' => TRUE,
-            'description' => 'Directory copied!'
-        ];
+    function copy_directory($relative_src_path, $relative_dest_path){
+        /** Get source path info for processing */
+        $src_dir_info = parent::get_info($relative_src_path);
 
-        return [
-            'status' => FALSE,
-            'description' => 'Failed to copy directory!'
-        ];
-    }
-
-    function move_directory($absolute_src_path, $absolute_dest_path){
-        if(parent::move_directory(ABSPATH.$absolute_src_path, ABSPATH.$absolute_dest_path)) return [
-            'status' => TRUE,
-            'description' => 'Directory copied!'
-        ];
-
-        return [
-            'status' => FALSE,
-            'description' => 'Failed to copy directory!'
-        ];
-    }
-
-    function delete_directory($absolute_path){
-        if(parent::delete_directory(ABSPATH.$absolute_path)) return [
-            'status' => TRUE,
-            'description' => 'Directory deleted!'
-        ];
-
-        return [
-            'status' => FALSE,
-            'description' => 'Failed to delete directory!'
-        ];
-    }
-
-    function download_file($remote_url, $absolute_path){
-        $absolute_path = ABSPATH.$absolute_path;
-
-        /** Check absolute file path and get the response */
-        $absolute_path_info = parent::get_file_info($absolute_path);
-
-        /**  */
-        if(FALSE === $absolute_path_info['status']){
-            $path_components = explode('/', $absolute_path);
-
-            $file_name = $path_components[count($path_components) - 1];
-    
-            if(empty($file_name)) return [
-                'status' => false,
-                'description' => 'Destination is not a file!'
-            ];
-
-            $absolute_dest_dir = substr($absolute_path, 0, strpos($absolute_path, $file_name));
-
-            if(!file_exists($absolute_dest_dir)) {
-                $dest_dir_created = parent::create_directory($absolute_dest_dir);
-            
-                if(FALSE === $dest_dir_created['status']) return [
-                    'status' => false,
-                    'description' => 'Directory for destination file cannot be created!'
-                ];
-            }
-        }
-
-        else if('directory' == $absolute_path_info['type']) return [
+        if(FALSE === $src_dir_info['status']) return [
             'status' => false,
-            'description' => 'Destination is not a file!'
+            'description' => 'Source directory does not exists!'
         ];
 
+        else if('file' == $src_dir_info['type']) return [
+            'status' => false,
+            'description' => 'Invalid source directory!'
+        ];
 
-        if(parent::download_file($remote_url, $absolute_path)) return [
+        $absolute_src_dir_path = $src_dir_info['absolute_path'];
+
+        /** Get destination path info for processing */
+        $dest_dir_info = parent::get_info($relative_dest_path);
+
+        if(TRUE === $dest_dir_info['status'] && 'file' == $dest_dir_info['type']) return [
+            'status' => false,
+            'description' => 'Invalid destination directory!'
+        ];
+
+        $absolute_dest_dir_path = $dest_dir_info['absolute_path'];
+
+        /** Recursive copy also creates the directory 
+         * if required */
+        parent::recursive_copy($absolute_src_dir_path, $absolute_dest_dir_path);
+
+        return [
+            'status'            => TRUE,
+            'source_dir_path'   => $absolute_src_dir_path,
+            'dir_path'          => $absolute_dest_dir_path,
+            'description'       => 'Directory copied!'
+        ];
+    }
+
+    function move_directory($relative_src_path, $relative_dest_path){
+        /** Get source path info for processing */
+        $src_dir_info = parent::get_info($relative_src_path);
+
+        if(FALSE === $src_dir_info['status']) return [
+            'status' => false,
+            'description' => 'Source directory does not exists!'
+        ];
+
+        else if('file' == $src_dir_info['type']) return [
+            'status' => false,
+            'description' => 'Invalid source directory!'
+        ];
+
+        $absolute_src_dir_path = $src_dir_info['absolute_path'];
+
+        /** Get destination path info for processing */
+        $dest_dir_info = parent::get_info($relative_dest_path);
+
+        if(TRUE === $dest_dir_info['status'] && 'file' == $dest_dir_info['type']) return [
+            'status' => false,
+            'description' => 'Invalid destination directory!'
+        ];
+
+        $absolute_dest_dir_path = $dest_dir_info['absolute_path'];
+
+        /** Recursive copy also creates the directory 
+         * if required */
+        parent::recursive_move($absolute_src_dir_path, $absolute_dest_dir_path);
+
+        return [
+            'status'            => TRUE,
+            'dir_path'          => $absolute_dest_dir_path,
+            'description'       => 'Directory moved!'
+        ];
+    }
+
+    function delete_directory($relative_path){
+        /** Get source path info for processing */
+        $path_info = parent::get_info($relative_path);
+
+        if(FALSE === $path_info['status']) return [
+            'status' => TRUE,
+            'description' => 'Directory already deleted!'
+        ];
+
+        else if('file' == $path_info['type']) return [
+            'status' => TRUE,
+            'description' => 'Invalid directory!'
+        ];
+
+        $dir_path = $path_info['absolute_path'];
+
+        /** Recursive copy also creates the directory 
+         * if required */
+        parent::recursive_delete($dir_path);
+
+        return [
+            'status'            => TRUE,
+            'description'       => 'Directory deleted!'
+        ];
+    }
+
+    function download_file($remote_url, $download_location){
+        /** Check download location */
+        $download_location_info = parent::get_info($download_location);
+
+        $download_location = $download_location_info['absolute_path'];
+
+        /** File does not exists */
+        if(FALSE === $download_location_info['status'] && FALSE === parent::create_directory_for_file($download_location)) return [
+            'status' => false,
+            'description' => 'Directory for download location can not be created!'
+        ];
+
+        /** Return false: If relative file specified
+         * contains the path of a directory
+         * instead of the file */
+        else if('directory' == $download_location_info['type']) return [
+            'status' => false,
+            'description' => 'Specified download file path is not valid!'
+        ];
+
+        if(parent::download_file($remote_url, $download_location)) return [
             'status' => TRUE,
             'description' => 'File Downloaded!'
         ];
