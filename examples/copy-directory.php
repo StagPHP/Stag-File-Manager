@@ -4,14 +4,19 @@
  */
 
 // Create new file manger instance
-$file_manager = new stag_file_manager;
+$file_manager = new stag_file_manager('/examples');
 
-$relative_src_path = '/examples/';
+$src_dir = '/test/';
 
-$relative_dest_path = '/examples-backup/';
+$dest_dir = '/moved-files/';
 
 // Check is the folder writable
-$result = $file_manager->copy_directory($relative_src_path, $relative_dest_path);
+$result = $file_manager->copy_directory(array(
+    'directory'             => $src_dir,            // Directory location where file will be created
+    'destination_directory' => $dest_dir,           // File content
+    'merge_directory'       => FALSE,               // By default create directory flag assumed false
+    'overwrite_file'        => FALSE                // By default create file flag assumed false
+));
 
 // Output - var dump the result
 echo '<div><p>File Creation Result: </p><table><tr><td><b>KEY</b></td><td><b>VALUE</b></td><td><b>TYPE</b></td></tr>';

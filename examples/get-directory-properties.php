@@ -4,10 +4,12 @@
  */
 
 // Create new file manger instance
-$file_manager = new stag_file_manager;
+$file_manager = new stag_file_manager('/examples');
 
 // Check is the folder writable
-$file_info = $file_manager->get_directory_properties('/examples/');
+$file_info = $file_manager->get_directory_properties([
+    'directory' => '/test/'
+]);
 
 // Output - var dump the result
 echo '<div><p>File Basic Info: </p><table><tr><td><b>KEY</b></td><td><b>VALUE</b></td><td><b>TYPE</b></td></tr>';

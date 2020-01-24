@@ -6,16 +6,15 @@
 // Create new file manger instance
 $file_manager = new stag_file_manager('/examples');
 
-$src_dir = '/test/';
-
-$dest_dir = '/moved-files/';
+$old_filename = 'zip-file-moved.php';
+$new_filename = 'zip-file-moved.php';
 
 // Check is the folder writable
-$result = $file_manager->move_directory(array(
-    'directory'             => $src_dir,            // Directory location where file will be created
-    'destination_directory' => $dest_dir,           // File content
-    // 'merge_directory'       => FALSE,               // By default create directory flag assumed false
-    // 'overwrite_file'        => FALSE                // By default create file flag assumed false
+$result = $file_manager->rename_file(array(
+    'directory'             => '/test/moved-files/',            // Directory location where file will be created
+    'file_name'             => $old_filename,       // Name of the file
+    'new_file_name'         => $new_filename,       // File content
+    'overwrite_file'        => TRUE              // By default create file flag assumed false
 ));
 
 // Output - var dump the result

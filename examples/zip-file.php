@@ -6,17 +6,14 @@
 // Create new file manger instance
 $file_manager = new stag_file_manager('/examples');
 
-$src_dir = '/test/';
-
-$dest_dir = '/moved-files/';
+$args = array(
+    'directory'             => '/',
+    'file_name'             => 'zip-file.php',
+    'destination_directory' => '/test/'
+);
 
 // Check is the folder writable
-$result = $file_manager->move_directory(array(
-    'directory'             => $src_dir,            // Directory location where file will be created
-    'destination_directory' => $dest_dir,           // File content
-    // 'merge_directory'       => FALSE,               // By default create directory flag assumed false
-    // 'overwrite_file'        => FALSE                // By default create file flag assumed false
-));
+$result = $file_manager->compress_file($args);
 
 // Output - var dump the result
 echo '<div><p>File Creation Result: </p><table><tr><td><b>KEY</b></td><td><b>VALUE</b></td><td><b>TYPE</b></td></tr>';

@@ -1,1 +1,817 @@
-Coming Soon
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stag File Manager</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="stag-file-manager">Stag File Manager</h1>
+<p><img src="https://stagphp.github.io/stag-file-manager/assets/stag-file-manager.png" alt="StagPHP File Manager Image"><br>
+Stag File Manager is a part of core library of the StagPHP framework. It is used to manged files and folders on the server from application level. It is fast and high performance file manger with advance functionalites and top notch security. Follow the tutorial below to use this in your StagPHP application or on another framework.</p>
+<p>Stag File Manager, is simply a php script. So, you can use it as a standalone library (PHP script) for file management, in your custom PHP project or any other PHP framework. You just need to follow the instructions given below.</p>
+<ul>
+<li>This library is capable of doing several complex file operation smoothly. Such as recursive copy, move, delete etc.</li>
+<li>It is tested and compatible with <strong>Linux</strong>, <strong>Windows</strong> and <strong>Unix</strong> environment.</li>
+<li>It is also compatible with latest PHP version 7.x.x</li>
+<li>It include file downloader and zip archive manager</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>PHP 5.7 or higer</li>
+<li><a href="https://www.php.net/manual/en/curl.requirements.php">libcurl</a> &amp; <a href="https://www.php.net/manual/en/zip.requirements.php">libzip</a> extensions required. These extensions are common and are enabled by default in most of the hosting environments.</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<h3 id="on-stagphp">On StagPHP</h3>
+<p>You don’t need to install anything to use this library in your StagPHP application. Its comes built-in. You just need to attach <strong>Stag File Manager Libarary</strong> it on your script. And call the methods defined.</p>
+<h3 id="on-another-php-framework">On another PHP framework</h3>
+<p>It is really simple, no brainer. Just include the file in your script and initialize the object of stag_file_manager class with root directory. And call the methods from the object initialized.</p>
+<ol>
+<li>First, you need to copy the files inside the dist (distribution) folder to your project folder. Include stag-file-manager.php in your PHP script or application at a root level.</li>
+<li>Define ABSPATH in your root level script.</li>
+</ol>
+<pre class=" language-php"><code class="prism  language-php"><span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">defined</span><span class="token punctuation">(</span><span class="token string">'ABSPATH'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">define</span><span class="token punctuation">(</span><span class="token string">'ABSPATH'</span><span class="token punctuation">,</span>  <span class="token function">dirname</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<ol start="3">
+<li>After including the file, initialize the object of stag_file_manager class with root directory.</li>
+<li>Use the object Initialized, to manage files and folder using the methods defined.</li>
+</ol>
+<p>Methods defined and usage are listed below.</p>
+<h2 id="stag-file-manager-operations">Stag File Manager Operations</h2>
+<h3 id="lists-of-methods">Lists of Methods:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Method Name</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><a href="#get-file-or-directory-info">Get  Info</a></td>
+<td align="left">Returns information about the file or directory</td>
+</tr>
+<tr>
+<td align="left"><a href="#get-file-properties">Get File Properties</a></td>
+<td align="left">Returns file properties (Detailed Information)</td>
+</tr>
+<tr>
+<td align="left"><a href="#get-directory-properties">Get Directory Properties</a></td>
+<td align="left">Returns directory properties (Detailed Information)</td>
+</tr>
+<tr>
+<td align="left"><a href="#scan-directory">Scan Directory</a></td>
+<td align="left">Scan the directory for files and folders</td>
+</tr>
+<tr>
+<td align="left"><a href="#deep-scan-directory">Deep Scan Directory</a></td>
+<td align="left">Deeply scan the directory for its entire files and folders</td>
+</tr>
+<tr>
+<td align="left"><a href="#create-file">Create File</a></td>
+<td align="left">Creates the file only if does not exists</td>
+</tr>
+<tr>
+<td align="left"><a href="#update-file">Update File</a></td>
+<td align="left">Updates the file and creates it if does not exists</td>
+</tr>
+<tr>
+<td align="left"><a href="#copy-file">Copy File</a></td>
+<td align="left">Creates a copy of a file</td>
+</tr>
+<tr>
+<td align="left"><a href="#move-file">Move File</a></td>
+<td align="left">Move file to another location</td>
+</tr>
+<tr>
+<td align="left"><a href="#move-file">Rename File</a></td>
+<td align="left">Rename file</td>
+</tr>
+<tr>
+<td align="left"><a href="#delete-file">Delete File</a></td>
+<td align="left">Deletes the file permanently</td>
+</tr>
+<tr>
+<td align="left"><a href="#create-directory">Create Directory</a></td>
+<td align="left">Creates a empty directory</td>
+</tr>
+<tr>
+<td align="left"><a href="#copy-directory">Copy Directory</a></td>
+<td align="left">Create a copy of the directory (<strong>recursively</strong>)</td>
+</tr>
+<tr>
+<td align="left"><a href="#move-directory">Move Directory</a></td>
+<td align="left">Move directory to another location (<strong>recursively</strong>)</td>
+</tr>
+<tr>
+<td align="left"><a href="#rename-directory">Rename Directory</a></td>
+<td align="left">Rename directory</td>
+</tr>
+<tr>
+<td align="left"><a href="#delete-directory">Delete Directory</a></td>
+<td align="left">Deletes the directory permanently (<strong>recursively</strong>)</td>
+</tr>
+<tr>
+<td align="left"><a href="#download-file">Download File</a></td>
+<td align="left">Download a file from remote URL</td>
+</tr>
+<tr>
+<td align="left"><a href="#get-remote-file-content">Get Remote File Content</a></td>
+<td align="left">Get remote file content from remote URL</td>
+</tr>
+<tr>
+<td align="left"><a href="#compress-file">Compress File</a></td>
+<td align="left">Compress file to zip</td>
+</tr>
+<tr>
+<td align="left"><a href="#compress-directory">Compress Directory</a></td>
+<td align="left">Compress entire directory to zip</td>
+</tr>
+<tr>
+<td align="left"><a href="#extract-file">Extract Zip</a></td>
+<td align="left">Extract Zip file</td>
+</tr>
+</tbody>
+</table><h3 id="popular-hacks">Popular Hacks:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Hacks</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><a href="#change-file-extension">Change file extension</a></td>
+<td align="left">Change the file extension, not type</td>
+</tr>
+<tr>
+<td align="left"><a href="#move-to-trash">Move to trash</a></td>
+<td align="left">Move files and directories to trash</td>
+</tr>
+</tbody>
+</table><h1 id="get-info">Get Info</h1>
+<h3 id="basic-information">Basic Information</h3>
+<p>You can follow the below listed example to get the basic information about the file or directory.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Basic Information about file
+ * 
+ * @returns: array - status, type, is_writable */</span>
+<span class="token variable">$basic_info</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">get_info</span><span class="token punctuation">(</span><span class="token string">'/filename.extension'</span><span class="token punctuation">,</span> <span class="token constant">FALSE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Basic Information about directory (just pass
+ * directory path in place of file path)
+ * 
+ * @returns: array - status, type, is_writable */</span>
+<span class="token variable">$basic_info</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">get_info</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">,</span> <span class="token constant">FALSE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file or directory (<strong>string</strong>)</td>
+<td align="left">Must be relative to root</td>
+</tr>
+<tr>
+<td align="left">Detailed Information Flag (<strong>boolean</strong>)</td>
+<td align="left">Use <strong>FALSE</strong> for basic information</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status	(<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if file exists</td>
+</tr>
+<tr>
+<td align="left">type (<strong>string</strong>)</td>
+<td align="left"><strong>file</strong> or <strong>directory</strong> depending upon the argument passed</td>
+</tr>
+<tr>
+<td align="left">is_writable (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if file is writable</td>
+</tr>
+</tbody>
+</table><hr>
+<h3 id="detailed-information">Detailed Information</h3>
+<p>You can follow the below listed example to get the detailed information about the file or directory. As this method checks for multiple parameters, it takes slightly more server resource and execution time than the previous method.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Detailed Information about file
+ * 
+ * @returns: array - status, type, size,
+ * is_writable, permission, modified_time */</span>
+<span class="token variable">$full_info</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">get_info</span><span class="token punctuation">(</span><span class="token string">'/filename.extension'</span><span class="token punctuation">,</span> <span class="token constant">TRUE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Detailed Information about directory (just pass
+ * directory path in place of file path)
+ * 
+ * @returns: array - status, type, size,
+ * is_writable, permission, modified_time */</span>
+<span class="token variable">$full_info</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">get_info</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">,</span> <span class="token constant">TRUE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-1">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file or directory (<strong>string</strong>)</td>
+<td align="left">Must be relative to root</td>
+</tr>
+<tr>
+<td align="left">Detailed Information Flag (<strong>boolean</strong>)</td>
+<td align="left">Use <strong>TRUE</strong> for Detailed information</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-1">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status	(<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if file exists</td>
+</tr>
+<tr>
+<td align="left">type (<strong>string</strong>)</td>
+<td align="left">View <a href="https://en.wikipedia.org/wiki/Media_type">MIME Types</a> (<strong>inode/directory</strong> in case of directory)</td>
+</tr>
+<tr>
+<td align="left">size (<strong>integer</strong>)</td>
+<td align="left">File or Directory (including sub folders and files) in bytes</td>
+</tr>
+<tr>
+<td align="left">is_writable (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if file is writable</td>
+</tr>
+<tr>
+<td align="left">permission	(<strong>string</strong>)</td>
+<td align="left">File permissions in a octal numbers <a href="https://www.php.net/manual/en/function.fileperms.php">more info</a>.</td>
+</tr>
+<tr>
+<td align="left">modified_time (<strong>string</strong>)</td>
+<td align="left">Last modified time of a file or directory <strong>YYYY-12-30 24:60:60</strong></td>
+</tr>
+</tbody>
+</table><h1 id="scan-directory">Scan Directory</h1>
+<p>You can follow the below listed example to scan directory. This method scans the directory on the level specified. That means, it will not scan the contents of the sub directory inside this directory. For sub directory, you can call this method again. We have restricted the method  to scan only single level in order to boost performance.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Scan directory
+ * 
+ * @returns: array - status, array of files,
+ * array of directories */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">scan_directory</span><span class="token punctuation">(</span><span class="token string">'/test/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-2">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file or directory (<strong>string</strong>)</td>
+<td align="left">Path must be relative</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-2">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if directory exists</td>
+</tr>
+<tr>
+<td align="left">directories (<strong>string</strong>)</td>
+<td align="left">Array of directory names</td>
+</tr>
+<tr>
+<td align="left">files (<strong>string</strong>)</td>
+<td align="left">Array of file names</td>
+</tr>
+</tbody>
+</table><h1 id="create-or-update-file">Create or Update File</h1>
+<p>You can follow the below listed example to create a new file or update the existing file. It creates a file when specified file does not exists and updates a file when it exists. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Create or Update File
+ * 
+ * @returns: array - status, array of files,
+ * array of directories */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">update_file</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">,</span> <span class="token variable">$file_content</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-3">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">Path of the file, which needs to be updated or where it needs to be created. Must be relative to root</td>
+</tr>
+<tr>
+<td align="left">File content (<strong>string</strong>)</td>
+<td align="left">File content</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-3">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="copy-file">Copy File</h1>
+<p>You can follow the below listed example to copy a new file from one directory location to another. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Copy File
+ * 
+ * @returns: array - status, array of files,
+ * array of directories */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">copy_file</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">,</span> <span class="token string">'/new-directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-4">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">Path of the file, which needs to be copied</td>
+</tr>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">New path of the file, where it needs to be copied</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-4">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="move-file">Move File</h1>
+<p>You can follow the below listed example to move a file from one directory location to another. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Move File
+ * 
+ * @returns: array - status, array of files,
+ * array of directories */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">move_file</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">,</span> <span class="token string">'/new-directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-5">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">Path of the file, which needs to be moved</td>
+</tr>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">New path of the file, where it needs to be moved</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-5">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="delete-file">Delete File</h1>
+<p>You can follow the below listed example to delete a file. This operation is nor reversible, so it deletes the file permanently.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Delete File
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">delete_file</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">.</span><span class="token variable">$file_name</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-6">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">Path of the file, which needs to be deleted</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-6">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="download-file">Download File</h1>
+<p>You can follow the below listed example to download a file from remote destination and save file to specified location. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** Remote URL from where file needed to be fetched */</span>
+<span class="token variable">$remote_url</span> <span class="token operator">=</span> <span class="token string">'https://stagphp.github.io/stag-file-manager/README.md'</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Download File
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">download_file</span><span class="token punctuation">(</span><span class="token variable">$remote_url</span><span class="token punctuation">,</span> <span class="token string">'/directory/file.extension'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-7">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Remote URL (<strong>string</strong>)</td>
+<td align="left">Remote URL must be complete including http protocol</td>
+</tr>
+<tr>
+<td align="left">Save location (<strong>string</strong>)</td>
+<td align="left">Relative location of the file, with filename and extension</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-7">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="get-remote-file-content">Get Remote File Content</h1>
+<p>You can follow the below listed example to get remote file content from remote destination URL. Content will be returend in a form of a string. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** Remote URL from where file needed to be fetched */</span>
+<span class="token variable">$remote_url</span> <span class="token operator">=</span> <span class="token string">'https://stagphp.github.io/stag-file-manager/README.md'</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Download File
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">get_remote_file_content</span><span class="token punctuation">(</span><span class="token variable">$remote_url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-8">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Remote URL (<strong>string</strong>)</td>
+<td align="left">Remote URL must be complete including http protocol</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-8">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="create-directory">Create Directory</h1>
+<p>You can follow the below listed example to creates a new empty directory. This fails if directory already exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Create Directory
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">delete_directory</span><span class="token punctuation">(</span><span class="token string">'/new-directory/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-9">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Relative path of a file (<strong>string</strong>)</td>
+<td align="left">Path of the file, which needs to be deleted</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-9">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="copy-directory">Copy Directory</h1>
+<p>You can follow the below listed example to copy a existing directory to new location (inside another directory). This is recursive operation. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Copy Directory
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">copy_directory</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">,</span> <span class="token string">'/new-loc/directory/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-10">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Directory Path (<strong>string</strong>)</td>
+<td align="left">Path of the directory, which needs to be copied</td>
+</tr>
+<tr>
+<td align="left">Directory Path (<strong>string</strong>)</td>
+<td align="left">Path to new location, where directory needs to be copied</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-10">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="move-directory">Move Directory</h1>
+<p>You can follow the below listed example to move a existing directory to new location (inside another directory). This is recursive operation. This method also creates the directory if does not exists.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Move Directory
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">move_directory</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">,</span> <span class="token string">'/new-loc/directory/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-11">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Directory Path (<strong>string</strong>)</td>
+<td align="left">Path of the directory, which needs to be moved</td>
+</tr>
+<tr>
+<td align="left">Directory Path (<strong>string</strong>)</td>
+<td align="left">Path to new location, where directory needs to be moved</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-11">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table><h1 id="delete-directory">Delete Directory</h1>
+<p>You can follow the below listed example to delete a directory. This is recursive operation. This operation is nor reversible, so it deletes the directory and entire files and sub directories permanently inside this directory.</p>
+<pre class=" language-php"><code class="prism  language-php"><span class="token variable">$file_manager</span>  <span class="token operator">=</span>  <span class="token keyword">new</span>  <span class="token class-name">stag_file_manager</span><span class="token punctuation">;</span>
+
+<span class="token comment">/** 
+ * Delete Directory
+ * 
+ * @returns: array - status, description */</span>
+<span class="token variable">$result</span> <span class="token operator">=</span> <span class="token variable">$file_manager</span><span class="token operator">-</span><span class="token operator">&gt;</span><span class="token function">delete_directory</span><span class="token punctuation">(</span><span class="token string">'/directory/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="parameters-to-be-passed-12">Parameters to be passed:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Directory Path (<strong>string</strong>)</td>
+<td align="left">Path of the directory, which needs to be deleted</td>
+</tr>
+</tbody>
+</table><h3 id="array-of-values-returned-after-execution-12">Array of values returned after execution:</h3>
+
+<table>
+<thead>
+<tr>
+<th align="left">Returned keys</th>
+<th align="left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">status (<strong>boolean</strong>)</td>
+<td align="left">In boolean, <strong>TRUE</strong> if operation was successful</td>
+</tr>
+<tr>
+<td align="left">description (<strong>string</strong>)</td>
+<td align="left">Success or Error message in case of failure</td>
+</tr>
+</tbody>
+</table></div>
+</body>
+
+</html>
