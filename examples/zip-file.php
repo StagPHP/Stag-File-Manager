@@ -9,7 +9,8 @@ $file_manager = new stag_file_manager('/examples');
 $args = array(
     'directory'             => '/',
     'file_name'             => 'zip-file.php',
-    'destination_directory' => '/test/'
+    'destination_directory' => '/test/',
+    'create_directories'    => TRUE
 );
 
 // Check is the folder writable

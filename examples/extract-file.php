@@ -8,8 +8,8 @@ $file_manager = new stag_file_manager('/examples');
 
 $args = array(
     'directory'             => '/test/',
-    'zip_file'              => 'zip-file.php.zip',
-    'destination_directory' => '/test/zip-file/',
+    'zip_file'              => 'cyzer-master.zip',
+    'destination_directory' => '/',
     'create_directories'    => TRUE
 );
 

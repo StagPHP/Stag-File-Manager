@@ -906,13 +906,18 @@ function compress_file($args){
         'description'       => 'File already exists!'
     ];
 
-    return parent::create_zip(
+    parent::create_zip(
         $absolute_dest_file_path,
         array(array(
             'src_file_loc' => $absolute_src_file_path,
             'file_loc'     => $args['file_name']
         ))
     );
+
+    return [
+        'status' => TRUE,
+        'description' => 'Zip Created!'
+    ];
 }
 
 function extract_zip($args){
@@ -977,6 +982,11 @@ function extract_zip($args){
     $absolute_dest_file_path = $dest_dir_info['absolute_path'];
 
     parent::extract_zip_file($absolute_src_file_path, $absolute_dest_file_path);
+
+    return [
+        'status' => TRUE,
+        'description' => 'Zip Extracted!'
+    ];
 }
 
 }

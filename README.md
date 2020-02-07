@@ -1,22 +1,22 @@
 # Stag File Manager
 ![StagPHP File Manager Image](https://stagphp.github.io/stag-file-manager/assets/stag-file-manager.png)
-Stag File Manager is a part of core library of the StagPHP framework. It is used to manged files and folders on the server from application level. It is fast and high performance file manger with advance functionalites and top notch security. Follow the tutorial below to use this in your StagPHP application or on another framework.
+Stag File Manager is the core part of StagPHP framework. It comes with built-in core library.  It is used to mange files and folders on the server. It is fast and high performance file manger with advance functionalites and top notch security. Follow the tutorial below to use this in your StagPHP application or on another framework.
 
 Stag File Manager, is simply a php script. So, you can use it as a standalone library (PHP script) for file management, in your custom PHP project or any other PHP framework. You just need to follow the instructions given below.
 
 - This library is capable of doing several complex file operation smoothly. Such as recursive copy, move, delete etc.
-- It is tested and compatible with **Linux**, **Windows** and **Unix** environment.
+- It is tested and compatible with **Linux**, **Windows** and **Unix** environment running PHP.
 - It is also compatible with latest PHP version 7.x.x
-- It include file downloader and zip archive manager
+- It includes file downloader and zip archive manager
 
 ## Requirements
 - PHP 5.7 or higer
-- [libcurl](https://www.php.net/manual/en/curl.requirements.php) & [libzip](https://www.php.net/manual/en/zip.requirements.php) extensions required. These extensions are common and are enabled by default in most of the hosting environments.
+- [libcurl](https://www.php.net/manual/en/curl.requirements.php) & [libzip](https://www.php.net/manual/en/zip.requirements.php) extensions required. These are common PHP extenstions. Installed and enabled by default in most of the hosting environments.
 
 ## Installation
 
 ### On StagPHP
-You don't need to install anything to use this library in your StagPHP application. Its comes built-in. You just need to attach **Stag File Manager Libarary** it on your script. And call the methods defined.
+Just include this library in your StagPHP application, it comes built-in. And call the methods defined.
 
 ### On another PHP framework
 It is really simple, no brainer. Just include the file in your script and initialize the object of stag_file_manager class with root directory. And call the methods from the object initialized.
@@ -66,9 +66,14 @@ Methods defined and usage are listed below.
 ### Basic Information
 You can follow the below listed example to get the basic information about the file or directory.
 ```PHP
-$file_manager  =  new  stag_file_manager;
+/** Root Directory */
+$root_directory = "/";
 
-/** 
+/** File Manager Object Initialize */
+$file_manager  =  new stag_file_manager($root_directory);
+
+/** Get Info
+ *
  * Basic Information about file
  * 
  * @returns: array - status, type, is_writable */
