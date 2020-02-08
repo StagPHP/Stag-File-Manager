@@ -672,6 +672,67 @@ function move_directory($args){
     ];
 }
 
+function move_directory_content($args){
+    /** Check the arguments */
+    if(empty($args['directory']) || empty($args['destination_directory'])) return [
+        'status'        => FALSE,
+        'absolute_path' => NULL,
+        'description'   => 'Invalid Arguments!'
+    ];
+
+    $merge = $overwrite = TRUE;
+        
+    /** Get source path info for processing */
+    $src_dir_info = parent::get_info($args['directory']);
+
+    if(FALSE === $src_dir_info['status']) return [
+        'status' => false,
+        'description' => 'Source directory does not exists!'
+    ];
+
+    else if('file' == $src_dir_info['type']) return [
+        'status' => false,
+        'description' => 'Invalid source directory!'
+    ];
+
+    $absolute_src_dir_path = $src_dir_info['absolute_path'];
+
+    /** Get destination path info for processing */
+    $dest_dir_info = parent::get_info($args['destination_directory']);
+
+    $absolute_dest_dir_path = $dest_dir_info['absolute_path'];
+
+    if($dest_dir_info['status'] && 'file' == $dest_dir_info['type']) return [
+        'status' => false,
+        'description' => 'Invalid destination directory!'
+    ];
+
+    if(isset($args['merge_directory'])) $merge = $args['merge_directory'];
+
+    if(isset($args['overwrite_file'])) $overwrite = $args['overwrite_file'];
+
+    if(parent::directory_child_check($args['directory'], $args['destination_directory'])) return [
+        'status' => false,
+        'description' => 'Directory cannot be moved inside the same directory!'
+    ];
+
+    /** Recursive copy also creates the directory 
+     * if required */
+    if(parent::recursive_move($absolute_src_dir_path, $absolute_dest_dir_path, $merge, $overwrite)) return [
+        'status'            => TRUE,
+        'source_dir_path'   => $absolute_src_dir_path,
+        'dir_path'          => $absolute_dest_dir_path,
+        'description'       => 'Directory copied!'
+    ];
+
+    return [
+        'status'            => TRUE,
+        'source_dir_path'   => NULL,
+        'dir_path'          => NULL,
+        'description'       => 'Cannot Copy!'
+    ];
+}
+
 function rename_directory($args){
     /** Check the arguments */
     if(empty($args['directory']) || empty($args['directory_new_name'])) return [
@@ -729,7 +790,7 @@ function delete_directory($args){
     ];
 
     /** Get source path info for processing */
-    $path_info = parent::get_info(empty($args['directory']));
+    $path_info = parent::get_info($args['directory']);
 
     if(FALSE === $path_info['status']) return [
         'status' => TRUE,
@@ -825,7 +886,7 @@ function get_remote_file_content($args){
         'description'   => 'Invalid Arguments!'
     ];
 
-    $content = parent::download_file($args['remote_url'], NULL);
+    $content = parent::curl_download_file($args['remote_url'], NULL);
 
     if(FALSE !== $content) return [
         'status' => TRUE,

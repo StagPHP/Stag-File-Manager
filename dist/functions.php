@@ -383,16 +383,14 @@ protected function recursive_delete($absolute_path){
     $dir = opendir($absolute_path);
   
     // Loop through the files in source directory 
-    while(false !== ($file = readdir($dir))){
-        if(($file != '.') && ($file != '..')){
-            /** Delete directory */
-            if(is_dir($absolute_path.$file))
-            $this->recursive_delete($absolute_path.$file.'/');
-  
-            /** Unlink file */
-            else unlink($absolute_path.$file);
-        }
+    while(false !== ($file = readdir($dir))) if(($file != '.') && ($file != '..')){ 
+        /** Delete directory */
+        if(is_dir($absolute_path.'/'.$file)) $this->recursive_delete($absolute_path.'/'.$file);
+
+        /** Unlink file */
+        else @unlink($absolute_path.'/'.$file);
     }
+
 
     // Close directory
     closedir($dir);
