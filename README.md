@@ -1,5 +1,5 @@
 # Stag File Manager
-![StagPHP File Manager Image](https://stagphp.github.io/stag-file-manager/assets/stag-file-manager.png)
+![StagPHP File Manager Image](https://stagphp.github.io/Stag-File-Manager/assets/stag-file-manager.png)
 Stag File Manager is the core part of StagPHP framework. It comes with built-in core library.  It is used to mange files and folders on the server. It is fast and high performance file manger with advance functionalites and top notch security. Follow the tutorial below to use this in your StagPHP application or on another framework.
 
 Stag File Manager, is simply a php script. So, you can use it as a standalone library (PHP script) for file management, in your custom PHP project or any other PHP framework. You just need to follow the instructions given below.
